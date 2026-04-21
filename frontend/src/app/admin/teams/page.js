@@ -39,7 +39,7 @@ export default function AdminTeams() {
     <div className="min-h-screen" style={{ background: '#00061C' }}>
       <Navbar />
       <div className="max-w-4xl mx-auto px-4 py-8">
-        <h1 className="text-2xl font-bold mb-6" style={{ color: '#F3C570' }}>🏏 Manage Teams</h1>
+        <h1 className="text-2xl font-bold mb-6" style={{ color: '#F3C570' }}>Manage Teams</h1>
 
         <div className="rounded-xl p-5 mb-6" style={{ background: '#0A1628', border: '1px solid #1a2a4a' }}>
           <h2 className="font-semibold mb-3 text-sm" style={{ color: '#A1BDCB' }}>Add Team</h2>

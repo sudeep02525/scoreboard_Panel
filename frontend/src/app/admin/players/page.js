@@ -36,25 +36,27 @@ export default function AdminPlayers() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ background: '#00061C' }}>
       <Navbar />
       <div className="max-w-4xl mx-auto px-4 py-8">
-        <h1 className="text-2xl font-bold text-gray-800 mb-6">👤 Manage Players</h1>
+        <h1 className="text-2xl font-bold mb-6" style={{ color: '#F3C570' }}>Manage Players</h1>
 
-        <div className="bg-white rounded-xl shadow-sm p-5 mb-6">
-          <h2 className="font-semibold text-gray-700 mb-3">Add Player</h2>
-          {msg && <p className="text-sm text-green-600 mb-2">{msg}</p>}
+        <div className="rounded-xl p-5 mb-6" style={{ background: '#0A1628', border: '1px solid #1a2a4a' }}>
+          <h2 className="font-semibold mb-3 text-sm" style={{ color: '#A1BDCB' }}>Add Player</h2>
+          {msg && <p className="text-sm mb-2" style={{ color: '#F3C570' }}>{msg}</p>}
           <form onSubmit={handleAdd} className="flex gap-3 flex-wrap">
             <input
               required value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
               placeholder="Player name"
-              className="border border-gray-300 rounded-lg px-3 py-2 flex-1 min-w-36 focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="rounded-lg px-3 py-2 flex-1 min-w-36 focus:outline-none text-sm"
+              style={{ background: '#000D27', border: '1px solid #1a2a4a', color: '#ffffff' }}
             />
             <select
               required value={form.team}
               onChange={(e) => setForm({ ...form, team: e.target.value })}
-              className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="rounded-lg px-3 py-2 focus:outline-none text-sm"
+              style={{ background: '#000D27', border: '1px solid #1a2a4a', color: '#ffffff' }}
             >
               <option value="">Select Team</option>
               {teams.map((t) => <option key={t._id} value={t._id}>{t.name} (Grp {t.group})</option>)}
@@ -62,11 +64,13 @@ export default function AdminPlayers() {
             <select
               value={form.role}
               onChange={(e) => setForm({ ...form, role: e.target.value })}
-              className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="rounded-lg px-3 py-2 focus:outline-none text-sm"
+              style={{ background: '#000D27', border: '1px solid #1a2a4a', color: '#ffffff' }}
             >
               {ROLES.map((r) => <option key={r} value={r}>{r}</option>)}
             </select>
-            <button type="submit" className="bg-green-700 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition">
+            <button type="submit" className="px-4 py-2 rounded-lg font-bold text-sm transition hover:opacity-90"
+              style={{ background: '#F3C570', color: '#00061C' }}>
               Add
             </button>
           </form>
@@ -77,19 +81,20 @@ export default function AdminPlayers() {
           {teams.map((team) => {
             const teamPlayers = players.filter((p) => p.team?._id === team._id || p.team === team._id);
             return (
-              <div key={team._id} className="bg-white rounded-xl shadow-sm p-4">
-                <h2 className="font-bold text-gray-700 mb-2">{team.name} — Group {team.group} ({teamPlayers.length}/8)</h2>
+              <div key={team._id} className="rounded-xl p-4" style={{ background: '#0A1628', border: '1px solid #1a2a4a' }}>
+                <h2 className="font-bold mb-2 text-sm" style={{ color: '#F3C570' }}>{team.name} — Group {team.group} ({teamPlayers.length}/8)</h2>
                 <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
                   {teamPlayers.map((p) => (
-                    <div key={p._id} className="bg-gray-50 rounded-lg p-2 flex justify-between items-center">
+                    <div key={p._id} className="rounded-lg p-2 flex justify-between items-center"
+                      style={{ background: '#000D27', border: '1px solid #1a2a4a' }}>
                       <div>
-                        <p className="text-sm font-medium text-gray-800">{p.name}</p>
-                        <p className="text-xs text-gray-400 capitalize">{p.role}</p>
+                        <p className="text-sm font-medium" style={{ color: '#ffffff' }}>{p.name}</p>
+                        <p className="text-xs capitalize" style={{ color: '#A1BDCB' }}>{p.role}</p>
                       </div>
-                      <button onClick={() => handleDelete(p._id)} className="text-red-400 text-xs hover:text-red-600">✕</button>
+                      <button onClick={() => handleDelete(p._id)} className="text-xs hover:opacity-70" style={{ color: '#F9A2B2' }}>✕</button>
                     </div>
                   ))}
-                  {teamPlayers.length === 0 && <p className="text-gray-400 text-sm col-span-4">No players yet</p>}
+                  {teamPlayers.length === 0 && <p className="text-sm col-span-4" style={{ color: '#1a2a4a' }}>No players yet</p>}
                 </div>
               </div>
             );
