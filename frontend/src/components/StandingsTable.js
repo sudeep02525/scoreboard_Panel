@@ -31,7 +31,7 @@ export default function StandingsTable({ teams, groupName }) {
               </td>
               <td className="px-2 py-2.5 text-center" style={{ color: '#A1BDCB' }}>{team.stats.played}</td>
               <td className="px-2 py-2.5 text-center font-bold" style={{ color: '#F3C570' }}>{team.stats.won}</td>
-              <td className="px-2 py-2.5 text-center" style={{ color: '#F9A2B2' }}>{team.stats.lost}</td>
+              <td className="px-2 py-2.5 text-center" style={{ color: '#EF4444' }}>{team.stats.lost}</td>
               <td className="px-2 py-2.5 text-center font-bold" style={{ color: '#F8DB7D' }}>{team.stats.points}</td>
               <td className="px-2 py-2.5 text-center" style={{ color: '#A1BDCB' }}>{team.stats.nrr?.toFixed(2)}</td>
             </tr>

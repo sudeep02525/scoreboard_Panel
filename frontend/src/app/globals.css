@@ -11,6 +11,8 @@
   --gold-bright: #F8DB7D;
   --gold-dark: #D4A843;
   --sky: #A1BDCB;
+  --red: #EF4444;
+  --red-dark: #DC2626;
 }
 
 @theme inline {

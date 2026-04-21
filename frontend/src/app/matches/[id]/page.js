@@ -111,7 +111,7 @@ export default function MatchDetailPage() {
           )}
           <span className="mt-3 inline-block text-xs px-3 py-1 rounded-full font-bold"
             style={match.status === 'live'
-              ? { background: '#F9A2B2', color: '#00061C' }
+              ? { background: '#EF4444', color: '#ffffff' }
               : match.status === 'completed'
               ? { background: '#1a2a4a', color: '#A1BDCB' }
               : { background: '#A1BDCB', color: '#00061C' }}>

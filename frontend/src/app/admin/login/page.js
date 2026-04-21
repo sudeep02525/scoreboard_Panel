@@ -51,7 +51,7 @@ export default function AdminLoginPage() {
 
         <div className="rounded-2xl p-6 animate-slide-up animate-delay-100" style={{ background: '#0A1628', border: '1px solid #1a2a4a' }}>
           {error && (
-            <p className="text-sm p-3 rounded-lg mb-4" style={{ background: '#1a0a0a', color: '#F9A2B2', border: '1px solid #3a1a1a' }}>
+            <p className="text-sm p-3 rounded-lg mb-4" style={{ background: '#1a0a0a', color: '#EF4444', border: '1px solid #3a1a1a' }}>
               {error}
             </p>
           )}

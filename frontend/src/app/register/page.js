@@ -41,7 +41,7 @@ export default function RegisterPage() {
           <h2 className="text-lg font-bold mb-5" style={{ color: '#ffffff' }}>Sign Up</h2>
 
           {error && (
-            <p className="text-sm p-3 rounded-lg mb-4" style={{ background: '#1a0a0a', color: '#F9A2B2', border: '1px solid #3a1a1a' }}>
+            <p className="text-sm p-3 rounded-lg mb-4" style={{ background: '#1a0a0a', color: '#EF4444', border: '1px solid #3a1a1a' }}>
               {error}
             </p>
           )}

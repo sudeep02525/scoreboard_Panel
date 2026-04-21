@@ -53,7 +53,7 @@ router.get('/:id', async (req, res) => {
 // Generate group stage schedule (admin)
 router.post('/generate-schedule', protect, adminOnly, async (req, res) => {
   try {
-    const { overs = 6, date } = req.body;
+    const { overs = 5, date } = req.body;
     const groupA = await Team.find({ group: 'A' });
     const groupB = await Team.find({ group: 'B' });
 
@@ -124,6 +124,17 @@ router.put('/:id', protect, adminOnly, async (req, res) => {
     const match = await Match.findByIdAndUpdate(req.params.id, req.body, { new: true })
       .populate('teamA teamB', 'name');
     res.json(match);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Delete match (admin)
+router.delete('/:id', protect, adminOnly, async (req, res) => {
+  try {
+    const match = await Match.findByIdAndDelete(req.params.id);
+    if (!match) return res.status(404).json({ message: 'Match not found' });
+    res.json({ message: 'Match deleted successfully' });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -399,7 +410,7 @@ router.put('/:id/complete', protect, adminOnly, async (req, res) => {
 // Generate semi finals (admin)
 router.post('/generate-semis', protect, adminOnly, async (req, res) => {
   try {
-    const { overs = 6, date } = req.body;
+    const { overs = 5, date } = req.body;
     // Top 2 from each group by points
     const groupA = await Team.find({ group: 'A' }).sort({ 'stats.points': -1, 'stats.nrr': -1 }).limit(2);
     const groupB = await Team.find({ group: 'B' }).sort({ 'stats.points': -1, 'stats.nrr': -1 }).limit(2);
@@ -421,7 +432,7 @@ router.post('/generate-semis', protect, adminOnly, async (req, res) => {
 // Generate final (admin)
 router.post('/generate-final', protect, adminOnly, async (req, res) => {
   try {
-    const { overs = 6, date } = req.body;
+    const { overs = 5, date } = req.body;
     const semis = await Match.find({ stage: 'semi', status: 'completed' }).populate('result.winner');
     if (semis.length < 2) return res.status(400).json({ message: 'Both semi finals must be completed' });
 

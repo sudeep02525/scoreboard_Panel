@@ -159,7 +159,7 @@ export default function ScorePage() {
         {/* Header */}
         <div className="mb-6 animate-fade-in">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold mb-3"
-            style={{ background: 'rgba(249, 162, 178, 0.1)', border: '1px solid rgba(249, 162, 178, 0.3)', color: '#F9A2B2' }}>
+            style={{ background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', color: '#EF4444' }}>
             <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
               <circle cx="12" cy="12" r="8"/>
             </svg>
@@ -284,7 +284,7 @@ export default function ScorePage() {
                 {recentBalls.map((ball, i) => (
                   <div key={i} className="w-10 h-10 rounded-lg flex items-center justify-center font-bold text-sm"
                     style={
-                      ball.isWicket ? { background: 'rgba(249, 162, 178, 0.2)', color: '#F9A2B2', border: '1px solid rgba(249, 162, 178, 0.3)' }
+                      ball.isWicket ? { background: 'rgba(239, 68, 68, 0.2)', color: '#EF4444', border: '1px solid rgba(239, 68, 68, 0.3)' }
                       : ball.runs === 4 ? { background: 'rgba(161, 189, 203, 0.2)', color: '#A1BDCB', border: '1px solid rgba(161, 189, 203, 0.3)' }
                       : ball.runs === 6 ? { background: 'rgba(243, 197, 112, 0.2)', color: '#F3C570', border: '1px solid rgba(243, 197, 112, 0.3)' }
                       : { background: '#000D27', color: '#ffffff', border: '1px solid #1a2a4a' }
@@ -344,7 +344,7 @@ export default function ScorePage() {
               </button>
               <button onClick={() => handleBall(0, true)}
                 className="h-12 rounded-lg font-bold text-sm transition-all duration-300 hover:scale-105"
-                style={{ background: 'rgba(249, 162, 178, 0.2)', color: '#F9A2B2', border: '1px solid rgba(249, 162, 178, 0.3)' }}>
+                style={{ background: 'rgba(239, 68, 68, 0.2)', color: '#EF4444', border: '1px solid rgba(239, 68, 68, 0.3)' }}>
                 WICKET
               </button>
             </div>

@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 export default function MatchCard({ match }) {
   const statusStyle = {
-    live: { background: '#F9A2B2', color: '#00061C', label: '● LIVE' },
+    live: { background: '#EF4444', color: '#ffffff', label: '● LIVE' },
     scheduled: { background: '#A1BDCB', color: '#00061C', label: 'UPCOMING' },
     completed: { background: '#1a2a4a', color: '#A1BDCB', label: 'DONE' },
   };

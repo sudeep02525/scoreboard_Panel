@@ -11,6 +11,7 @@ export default function AdminTeams() {
   const [teams, setTeams] = useState([]);
   const [form, setForm] = useState({ name: '', group: 'A' });
   const [msg, setMsg] = useState('');
+  const [deleteConfirm, setDeleteConfirm] = useState(null);
 
   useEffect(() => {
     if (!loading && (!user || user.role !== 'admin')) router.push('/login');
@@ -32,8 +33,13 @@ export default function AdminTeams() {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm('Delete this team?')) return;
-    await api.delete(`/teams/${id}`);
+    setDeleteConfirm(id);
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteConfirm) return;
+    await api.delete(`/teams/${deleteConfirm}`);
+    setDeleteConfirm(null);
     loadTeams();
   };
 
@@ -43,6 +49,34 @@ export default function AdminTeams() {
   return (
     <div className="min-h-screen" style={{ background: 'linear-gradient(135deg, #00061C 0%, #000D27 50%, #001333 100%)' }}>
       <Navbar />
+      
+      {/* Delete Confirmation Modal */}
+      {deleteConfirm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-fade-in">
+          <div className="rounded-xl p-6 max-w-md w-full mx-4 animate-scale-in" 
+            style={{ background: '#0A1628', border: '2px solid #EF4444' }}>
+            <h3 className="text-lg font-bold mb-3" style={{ color: '#EF4444' }}>Delete Team?</h3>
+            <p className="text-sm mb-6" style={{ color: '#A1BDCB' }}>
+              Are you sure you want to delete this team? This action cannot be undone.
+            </p>
+            <div className="flex gap-3">
+              <button 
+                onClick={() => setDeleteConfirm(null)}
+                className="flex-1 px-4 py-2 rounded-lg font-bold text-sm transition hover:opacity-90"
+                style={{ background: '#1a2a4a', color: '#A1BDCB' }}>
+                Cancel
+              </button>
+              <button 
+                onClick={confirmDelete}
+                className="flex-1 px-4 py-2 rounded-lg font-bold text-sm transition hover:opacity-90"
+                style={{ background: '#EF4444', color: '#ffffff' }}>
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="max-w-4xl mx-auto px-4 py-8">
         <h1 className="text-2xl font-bold mb-6 animate-fade-in" style={{ color: '#F3C570' }}>Manage Teams</h1>
 
@@ -80,7 +114,7 @@ export default function AdminTeams() {
                       <p className="font-medium text-sm" style={{ color: '#ffffff' }}>{t.name}</p>
                       <p className="text-xs" style={{ color: '#A1BDCB' }}>{t.players?.length || 0}/8 players</p>
                     </div>
-                    <button onClick={() => handleDelete(t._id)} className="text-xs" style={{ color: '#F9A2B2' }}>Delete</button>
+                    <button onClick={() => handleDelete(t._id)} className="text-xs px-2 py-1 rounded hover:opacity-70" style={{ color: '#EF4444' }}>Delete</button>
                   </div>
                 ))}
                 {(g === 'A' ? groupA : groupB).length === 0 && <p className="text-xs" style={{ color: '#1a2a4a' }}>No teams yet</p>}

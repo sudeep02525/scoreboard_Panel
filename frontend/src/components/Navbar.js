@@ -46,7 +46,7 @@ export default function Navbar() {
             className="rounded-xl border-2 flex-shrink-0"
             style={{ borderColor: '#F3C570' }} />
           <div>
-            <p className="font-black text-base leading-tight tracking-wide" style={{ color: '#F3C570' }}>
+            <p className="font-bold text-base leading-tight tracking-wide" style={{ color: '#c9a227' }}>
               APL SCOREBOARD
             </p>
             <p className="text-xs font-semibold" style={{ color: '#A1BDCB' }}>
@@ -87,9 +87,9 @@ export default function Navbar() {
               <button onClick={handleLogout}
                 className="px-4 py-2 rounded-lg text-sm font-bold transition-all duration-300"
                 style={{ 
-                  background: 'rgba(249, 162, 178, 0.1)', 
-                  color: '#F9A2B2',
-                  border: '1px solid rgba(249, 162, 178, 0.3)'
+                  background: 'rgba(239, 68, 68, 0.1)', 
+                  color: '#EF4444',
+                  border: '1px solid rgba(239, 68, 68, 0.3)'
                 }}>
                 Logout
               </button>
@@ -135,9 +135,9 @@ export default function Navbar() {
             <button onClick={() => { handleLogout(); setMenuOpen(false); }}
               className="text-left px-4 py-2.5 rounded-lg text-sm font-bold mt-2 transition-all"
               style={{ 
-                color: '#F9A2B2',
-                background: 'rgba(249, 162, 178, 0.1)',
-                border: '1px solid rgba(249, 162, 178, 0.3)'
+                color: '#EF4444',
+                background: 'rgba(239, 68, 68, 0.1)',
+                border: '1px solid rgba(239, 68, 68, 0.3)'
               }}>
               Logout ({user.name})
             </button>

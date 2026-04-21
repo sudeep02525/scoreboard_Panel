@@ -104,7 +104,7 @@ export default function Dashboard() {
         </div>
         {liveMatches.length > 0 && (
           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold"
-            style={{ background: '#F9A2B2', color: '#00061C' }}>
+            style={{ background: '#EF4444', color: '#ffffff' }}>
             <span className="w-1.5 h-1.5 rounded-full bg-red-700 animate-pulse inline-block"></span>
             LIVE
           </div>
