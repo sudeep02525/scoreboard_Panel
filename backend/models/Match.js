@@ -1,5 +1,17 @@
 const mongoose = require('mongoose');
 
+const ballSchema = new mongoose.Schema({
+  over: { type: Number, required: true },
+  ball: { type: Number, required: true }, // 1-6
+  batsman: { type: mongoose.Schema.Types.ObjectId, ref: 'Player' },
+  bowler: { type: mongoose.Schema.Types.ObjectId, ref: 'Player' },
+  runs: { type: Number, default: 0 },
+  isWicket: { type: Boolean, default: false },
+  dismissalType: { type: String, default: '' }, // bowled, caught, lbw, run out, etc
+  extras: { type: String, default: '' }, // wd, nb, lb, b
+  commentary: { type: String, default: '' },
+}, { _id: true });
+
 const inningsSchema = new mongoose.Schema({
   team: { type: mongoose.Schema.Types.ObjectId, ref: 'Team' },
   runs: { type: Number, default: 0 },
@@ -7,21 +19,52 @@ const inningsSchema = new mongoose.Schema({
   overs: { type: Number, default: 0 },
   balls: { type: Number, default: 0 },
   extras: { type: Number, default: 0 },
+  currentBatsmen: [{
+    player: { type: mongoose.Schema.Types.ObjectId, ref: 'Player' },
+    runs: { type: Number, default: 0 },
+    balls: { type: Number, default: 0 },
+    fours: { type: Number, default: 0 },
+    sixes: { type: Number, default: 0 },
+    isStriker: { type: Boolean, default: false },
+  }],
+  currentBowler: {
+    player: { type: mongoose.Schema.Types.ObjectId, ref: 'Player' },
+    overs: { type: Number, default: 0 },
+    balls: { type: Number, default: 0 },
+    runs: { type: Number, default: 0 },
+    wickets: { type: Number, default: 0 },
+  },
+  ballByBall: [ballSchema],
+  partnerships: [{
+    batsman1: { type: mongoose.Schema.Types.ObjectId, ref: 'Player' },
+    batsman2: { type: mongoose.Schema.Types.ObjectId, ref: 'Player' },
+    runs: { type: Number, default: 0 },
+    balls: { type: Number, default: 0 },
+  }],
+  fallOfWickets: [{
+    runs: { type: Number },
+    wicket: { type: Number },
+    player: { type: mongoose.Schema.Types.ObjectId, ref: 'Player' },
+    over: { type: Number },
+  }],
   batting: [{
     player: { type: mongoose.Schema.Types.ObjectId, ref: 'Player' },
     runs: { type: Number, default: 0 },
     balls: { type: Number, default: 0 },
     fours: { type: Number, default: 0 },
     sixes: { type: Number, default: 0 },
+    strikeRate: { type: Number, default: 0 },
     status: { type: String, default: 'yet to bat' }, // yet to bat, batting, out, not out
     dismissal: { type: String, default: '' },
   }],
   bowling: [{
     player: { type: mongoose.Schema.Types.ObjectId, ref: 'Player' },
     overs: { type: Number, default: 0 },
+    balls: { type: Number, default: 0 },
     runs: { type: Number, default: 0 },
     wickets: { type: Number, default: 0 },
     maidens: { type: Number, default: 0 },
+    economy: { type: Number, default: 0 },
   }],
 });
 

@@ -33,19 +33,23 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4" style={{ background: '#00061C' }}>
+    <div className="min-h-screen flex items-center justify-center px-4" style={{ background: 'linear-gradient(135deg, #00061C 0%, #000D27 50%, #001333 100%)' }}>
       <div className="w-full max-w-sm">
-        <div className="text-center mb-8">
+        <div className="text-center mb-8 animate-fade-in">
           <img src="/logo.jpeg" alt="Logo" className="w-16 h-16 rounded-full mx-auto mb-4 border-2" style={{ borderColor: '#F3C570' }} />
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold mb-3"
             style={{ background: '#1a2a4a', color: '#F3C570' }}>
-            ⚙️ ADMIN PANEL
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M12 1v6m0 6v6m5.2-13.2l-4.2 4.2m0 6l4.2 4.2M23 12h-6m-6 0H1m18.2 5.2l-4.2-4.2m0-6l4.2-4.2"/>
+            </svg>
+            ADMIN PANEL
           </div>
           <h1 className="text-2xl font-bold" style={{ color: '#ffffff' }}>Admin Login</h1>
           <p className="text-xs mt-1" style={{ color: '#A1BDCB' }}>Restricted access only</p>
         </div>
 
-        <div className="rounded-2xl p-6" style={{ background: '#0A1628', border: '1px solid #1a2a4a' }}>
+        <div className="rounded-2xl p-6 animate-slide-up animate-delay-100" style={{ background: '#0A1628', border: '1px solid #1a2a4a' }}>
           {error && (
             <p className="text-sm p-3 rounded-lg mb-4" style={{ background: '#1a0a0a', color: '#F9A2B2', border: '1px solid #3a1a1a' }}>
               {error}

@@ -33,15 +33,15 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4" style={{ background: '#00061C' }}>
+    <div className="min-h-screen flex items-center justify-center px-4" style={{ background: 'linear-gradient(135deg, #00061C 0%, #000D27 50%, #001333 100%)' }}>
       <div className="w-full max-w-md">
-        <div className="text-center mb-8">
+        <div className="text-center mb-8 animate-fade-in">
           <img src="/logo.jpeg" alt="Logo" className="w-20 h-20 rounded-full mx-auto mb-4 border-2" style={{ borderColor: '#F3C570' }} />
           <h1 className="text-3xl font-bold" style={{ color: '#F3C570' }}>Cricket Tournament</h1>
           <p className="text-sm mt-1" style={{ color: '#A1BDCB' }}>Login to watch live scores</p>
         </div>
 
-        <div className="rounded-2xl p-6" style={{ background: '#0A1628', border: '1px solid #1a2a4a' }}>
+        <div className="rounded-2xl p-6 animate-slide-up animate-delay-100" style={{ background: '#0A1628', border: '1px solid #1a2a4a' }}>
           <h2 className="text-lg font-bold mb-5" style={{ color: '#ffffff' }}>Login</h2>
 
           {error && (

@@ -22,7 +22,12 @@ export default function AdminTeams() {
   const handleAdd = async (e) => {
     e.preventDefault();
     const res = await api.post('/teams', form);
-    if (res._id) { setMsg('Team added!'); setForm({ name: '', group: 'A' }); loadTeams(); }
+    if (res._id) { 
+      setMsg('Team added!'); 
+      const currentGroup = form.group; // Save current group
+      setForm({ name: '', group: currentGroup }); // Keep the same group selected
+      loadTeams(); 
+    }
     else setMsg(res.message || 'Error');
   };
 
@@ -36,12 +41,12 @@ export default function AdminTeams() {
   const groupB = teams.filter((t) => t.group === 'B');
 
   return (
-    <div className="min-h-screen" style={{ background: '#00061C' }}>
+    <div className="min-h-screen" style={{ background: 'linear-gradient(135deg, #00061C 0%, #000D27 50%, #001333 100%)' }}>
       <Navbar />
       <div className="max-w-4xl mx-auto px-4 py-8">
-        <h1 className="text-2xl font-bold mb-6" style={{ color: '#F3C570' }}>Manage Teams</h1>
+        <h1 className="text-2xl font-bold mb-6 animate-fade-in" style={{ color: '#F3C570' }}>Manage Teams</h1>
 
-        <div className="rounded-xl p-5 mb-6" style={{ background: '#0A1628', border: '1px solid #1a2a4a' }}>
+        <div className="rounded-xl p-5 mb-6 animate-slide-up animate-delay-100" style={{ background: '#0A1628', border: '1px solid #1a2a4a' }}>
           <h2 className="font-semibold mb-3 text-sm" style={{ color: '#A1BDCB' }}>Add Team</h2>
           {msg && <p className="text-sm mb-2" style={{ color: '#F3C570' }}>{msg}</p>}
           <form onSubmit={handleAdd} className="flex gap-3 flex-wrap">
@@ -62,8 +67,8 @@ export default function AdminTeams() {
         </div>
 
         <div className="grid gap-4 md:grid-cols-2">
-          {['A', 'B'].map((g) => (
-            <div key={g} className="rounded-xl p-4" style={{ background: '#0A1628', border: '1px solid #1a2a4a' }}>
+          {['A', 'B'].map((g, i) => (
+            <div key={g} className={`rounded-xl p-4 animate-slide-up animate-delay-${(i + 2) * 100}`} style={{ background: '#0A1628', border: '1px solid #1a2a4a' }}>
               <h2 className="font-bold mb-3 text-sm" style={{ color: '#F3C570' }}>
                 Group {g} ({(g === 'A' ? groupA : groupB).length}/4)
               </h2>

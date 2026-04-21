@@ -29,12 +29,12 @@ export default function AdminSchedule() {
   };
 
   return (
-    <div className="min-h-screen" style={{ background: '#00061C' }}>
+    <div className="min-h-screen" style={{ background: 'linear-gradient(135deg, #00061C 0%, #000D27 50%, #001333 100%)' }}>
       <Navbar />
       <div className="max-w-2xl mx-auto px-4 py-8">
-        <h1 className="text-2xl font-bold mb-6" style={{ color: '#F3C570' }}>Generate Schedule</h1>
+        <h1 className="text-2xl font-bold mb-6 animate-fade-in" style={{ color: '#F3C570' }}>Generate Schedule</h1>
 
-        <div className="rounded-xl p-6 space-y-4" style={{ background: '#0A1628', border: '1px solid #1a2a4a' }}>
+        <div className="rounded-xl p-6 space-y-4 animate-slide-up animate-delay-100" style={{ background: '#0A1628', border: '1px solid #1a2a4a' }}>
           {msg && <p className="p-3 rounded-lg text-sm" style={{ background: 'rgba(243, 197, 112, 0.1)', color: '#F3C570', border: '1px solid rgba(243, 197, 112, 0.3)' }}>{msg}</p>}
 
           <div className="flex gap-4">

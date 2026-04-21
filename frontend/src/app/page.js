@@ -69,7 +69,7 @@ export default function LandingPage() {
       {/* Main content */}
       <div className="relative z-10 max-w-5xl mx-auto px-6 pt-24 pb-20 text-center min-h-[85vh] flex flex-col justify-center items-center">
         {/* Live badge */}
-        <div className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full text-xs font-bold mb-8"
+        <div className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full text-xs font-bold mb-8 animate-fade-in"
           style={{ 
             background: 'rgba(243, 197, 112, 0.06)', 
             border: '1px solid rgba(243, 197, 112, 0.3)', 
@@ -81,7 +81,7 @@ export default function LandingPage() {
         </div>
 
         {/* Hero text */}
-        <h1 className="text-5xl md:text-7xl font-black mb-5 leading-tight tracking-tight">
+        <h1 className="text-5xl md:text-7xl font-black mb-5 leading-tight tracking-tight animate-slide-up animate-delay-100">
           <span style={{ color: '#ffffff' }}>WITNESS THE</span>
           <br />
           <span style={{ 
@@ -93,12 +93,12 @@ export default function LandingPage() {
           <span style={{ color: '#ffffff' }}>CRICKET TOURNAMENT</span>
         </h1>
 
-        <p className="text-lg md:text-xl mb-10 max-w-2xl mx-auto font-medium" style={{ color: '#A1BDCB' }}>
+        <p className="text-lg md:text-xl mb-10 max-w-2xl mx-auto font-medium animate-slide-up animate-delay-200" style={{ color: '#A1BDCB' }}>
           Live Scoreboard • Real-Time Updates • Complete Match Statistics
         </p>
 
         {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-14">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-14 animate-slide-up animate-delay-300">
           <Link href="/register">
             <button className="px-10 py-3.5 rounded-xl font-black text-base transition-all hover:scale-105 shadow-2xl w-64 tracking-wide"
               style={{ 
@@ -124,21 +124,34 @@ export default function LandingPage() {
         </div>
 
         {/* Stats bar */}
-        <div className="flex items-center justify-center gap-10 text-base flex-wrap font-semibold">
+        <div className="flex items-center justify-center gap-10 text-base flex-wrap font-semibold animate-fade-in animate-delay-400">
           <div className="flex items-center gap-2">
-            <span className="text-2xl">🏏</span>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ color: '#F3C570' }}>
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
             <span style={{ color: '#A1BDCB' }}>8 Teams</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-2xl">👥</span>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ color: '#F3C570' }}>
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
             <span style={{ color: '#A1BDCB' }}>64 Players</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-2xl">⚡</span>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ color: '#F3C570' }}>
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+            </svg>
             <span style={{ color: '#A1BDCB' }}>Live Updates</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-2xl">🏟️</span>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ color: '#F3C570' }}>
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+              <polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
             <span style={{ color: '#A1BDCB' }}>2 Grounds</span>
           </div>
         </div>
@@ -146,17 +159,44 @@ export default function LandingPage() {
         {/* Features grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-32 max-w-5xl mx-auto">
           {[
-            { icon: '⚡', title: 'Live Match Scores', desc: 'Ball-by-ball real-time updates' },
-            { icon: '📈', title: 'Team Standings', desc: 'Rankings, wins, losses & points' },
-            { icon: '🏆', title: 'Tournament Format', desc: 'Groups → Semis → Grand Final' },
+            { 
+              icon: (
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                </svg>
+              ), 
+              title: 'Live Match Scores', 
+              desc: 'Ball-by-ball real-time updates' 
+            },
+            { 
+              icon: (
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <line x1="12" y1="20" x2="12" y2="10"/>
+                  <line x1="18" y1="20" x2="18" y2="4"/>
+                  <line x1="6" y1="20" x2="6" y2="16"/>
+                </svg>
+              ), 
+              title: 'Team Standings', 
+              desc: 'Rankings, wins, losses & points' 
+            },
+            { 
+              icon: (
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="12" cy="8" r="7"/>
+                  <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/>
+                </svg>
+              ), 
+              title: 'Tournament Format', 
+              desc: 'Groups → Semis → Grand Final' 
+            },
           ].map((feature, i) => (
-            <div key={i} className="p-6 rounded-2xl backdrop-blur-sm transition-all hover:scale-105 hover:border-opacity-100"
+            <div key={i} className={`p-6 rounded-2xl backdrop-blur-sm transition-all hover:scale-105 hover:border-opacity-100 animate-slide-up animate-delay-${(i + 1) * 100}`}
               style={{ 
                 background: 'rgba(10, 22, 40, 0.7)', 
                 border: '2px solid rgba(243, 197, 112, 0.2)',
                 boxShadow: '0 10px 40px rgba(0, 0, 0, 0.3)'
               }}>
-              <div className="text-4xl mb-3">{feature.icon}</div>
+              <div className="mb-3" style={{ color: '#F3C570' }}>{feature.icon}</div>
               <h3 className="font-black text-lg mb-2 tracking-wide" style={{ color: '#F3C570' }}>{feature.title}</h3>
               <p className="text-sm leading-relaxed" style={{ color: '#A1BDCB' }}>{feature.desc}</p>
             </div>

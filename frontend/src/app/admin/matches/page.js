@@ -30,19 +30,19 @@ export default function AdminMatches() {
   };
 
   return (
-    <div className="min-h-screen" style={{ background: '#00061C' }}>
+    <div className="min-h-screen" style={{ background: 'linear-gradient(135deg, #00061C 0%, #000D27 50%, #001333 100%)' }}>
       <Navbar />
       <div className="max-w-4xl mx-auto px-4 py-8">
-        <h1 className="text-2xl font-bold mb-6" style={{ color: '#F3C570' }}>Manage Matches</h1>
+        <h1 className="text-2xl font-bold mb-6 animate-fade-in" style={{ color: '#F3C570' }}>Manage Matches</h1>
 
         {matches.length === 0 ? (
-          <div className="rounded-xl p-6 text-center" style={{ background: '#0A1628', border: '1px solid #1a2a4a' }}>
+          <div className="rounded-xl p-6 text-center animate-slide-up animate-delay-100" style={{ background: '#0A1628', border: '1px solid #1a2a4a' }}>
             <p style={{ color: '#A1BDCB' }}>No matches yet. <Link href="/admin/schedule" className="underline" style={{ color: '#F3C570' }}>Generate schedule first</Link></p>
           </div>
         ) : (
           <div className="space-y-3">
-            {matches.map((m) => (
-              <div key={m._id} className="rounded-xl p-4 flex items-center justify-between gap-4"
+            {matches.map((m, i) => (
+              <div key={m._id} className={`rounded-xl p-4 flex items-center justify-between gap-4 animate-slide-up animate-delay-${Math.min((i + 1) * 100, 400)}`}
                 style={{ background: '#0A1628', border: '1px solid #1a2a4a' }}>
                 <div className="flex-1">
                   <p className="font-semibold text-sm" style={{ color: '#ffffff' }}>{m.teamA?.name} vs {m.teamB?.name}</p>

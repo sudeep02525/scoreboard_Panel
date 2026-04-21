@@ -36,12 +36,12 @@ export default function AdminPlayers() {
   };
 
   return (
-    <div className="min-h-screen" style={{ background: '#00061C' }}>
+    <div className="min-h-screen" style={{ background: 'linear-gradient(135deg, #00061C 0%, #000D27 50%, #001333 100%)' }}>
       <Navbar />
       <div className="max-w-4xl mx-auto px-4 py-8">
-        <h1 className="text-2xl font-bold mb-6" style={{ color: '#F3C570' }}>Manage Players</h1>
+        <h1 className="text-2xl font-bold mb-6 animate-fade-in" style={{ color: '#F3C570' }}>Manage Players</h1>
 
-        <div className="rounded-xl p-5 mb-6" style={{ background: '#0A1628', border: '1px solid #1a2a4a' }}>
+        <div className="rounded-xl p-5 mb-6 animate-slide-up animate-delay-100" style={{ background: '#0A1628', border: '1px solid #1a2a4a' }}>
           <h2 className="font-semibold mb-3 text-sm" style={{ color: '#A1BDCB' }}>Add Player</h2>
           {msg && <p className="text-sm mb-2" style={{ color: '#F3C570' }}>{msg}</p>}
           <form onSubmit={handleAdd} className="flex gap-3 flex-wrap">
@@ -78,10 +78,10 @@ export default function AdminPlayers() {
 
         {/* Players grouped by team */}
         <div className="space-y-4">
-          {teams.map((team) => {
+          {teams.map((team, i) => {
             const teamPlayers = players.filter((p) => p.team?._id === team._id || p.team === team._id);
             return (
-              <div key={team._id} className="rounded-xl p-4" style={{ background: '#0A1628', border: '1px solid #1a2a4a' }}>
+              <div key={team._id} className={`rounded-xl p-4 animate-slide-up animate-delay-${Math.min((i + 2) * 100, 400)}`} style={{ background: '#0A1628', border: '1px solid #1a2a4a' }}>
                 <h2 className="font-bold mb-2 text-sm" style={{ color: '#F3C570' }}>{team.name} — Group {team.group} ({teamPlayers.length}/8)</h2>
                 <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
                   {teamPlayers.map((p) => (

@@ -23,7 +23,11 @@ export default function StandingsTable({ teams, groupName }) {
               <td className="px-4 py-2.5" style={{ color: '#A1BDCB' }}>{i + 1}</td>
               <td className="px-4 py-2.5">
                 <span className="font-semibold" style={{ color: '#ffffff' }}>{team.name}</span>
-                {i < 2 && <span className="ml-2 text-xs" style={{ color: '#F3C570' }}>✓</span>}
+                {i < 2 && (
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="inline ml-2" style={{ color: '#F3C570' }}>
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                )}
               </td>
               <td className="px-2 py-2.5 text-center" style={{ color: '#A1BDCB' }}>{team.stats.played}</td>
               <td className="px-2 py-2.5 text-center font-bold" style={{ color: '#F3C570' }}>{team.stats.won}</td>
@@ -39,8 +43,11 @@ export default function StandingsTable({ teams, groupName }) {
         </tbody>
       </table>
       {teams && teams.length > 0 && (
-        <div className="px-4 py-2 text-xs" style={{ background: '#000D27', color: '#A1BDCB', borderTop: '1px solid #1a2a4a' }}>
-          ✓ Top 2 qualify for Semi Finals
+        <div className="px-4 py-2 text-xs flex items-center gap-2" style={{ background: '#000D27', color: '#A1BDCB', borderTop: '1px solid #1a2a4a' }}>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          Top 2 qualify for Semi Finals
         </div>
       )}
     </div>

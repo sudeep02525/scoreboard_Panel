@@ -155,6 +155,210 @@ router.put('/:id/score', protect, adminOnly, async (req, res) => {
   }
 });
 
+// Ball-by-ball scoring (admin)
+router.post('/:id/ball', protect, adminOnly, async (req, res) => {
+  try {
+    const { 
+      inningsNum, 
+      runs, 
+      isWicket, 
+      dismissalType,
+      extras, 
+      batsmanId, 
+      bowlerId,
+      strikerId,
+      nonStrikerId,
+      commentary 
+    } = req.body;
+
+    const match = await Match.findById(req.params.id)
+      .populate('innings1.currentBatsmen.player innings1.currentBowler.player innings2.currentBatsmen.player innings2.currentBowler.player', 'name');
+    
+    if (!match) return res.status(404).json({ message: 'Match not found' });
+
+    const inningsKey = inningsNum === 1 ? 'innings1' : 'innings2';
+    if (!match[inningsKey]) {
+      match[inningsKey] = {
+        team: inningsNum === 1 ? match.teamA : match.teamB,
+        runs: 0,
+        wickets: 0,
+        overs: 0,
+        balls: 0,
+        extras: 0,
+        currentBatsmen: [],
+        ballByBall: [],
+        partnerships: [],
+        fallOfWickets: [],
+        batting: [],
+        bowling: [],
+      };
+    }
+
+    const innings = match[inningsKey];
+    
+    // Initialize current batsmen if not set
+    if (innings.currentBatsmen.length === 0 && strikerId && nonStrikerId) {
+      innings.currentBatsmen = [
+        { player: strikerId, runs: 0, balls: 0, fours: 0, sixes: 0, isStriker: true },
+        { player: nonStrikerId, runs: 0, balls: 0, fours: 0, sixes: 0, isStriker: false },
+      ];
+    }
+
+    // Initialize current bowler if not set
+    if (!innings.currentBowler.player && bowlerId) {
+      innings.currentBowler = { player: bowlerId, overs: 0, balls: 0, runs: 0, wickets: 0 };
+    }
+
+    // Calculate current over and ball
+    const currentOver = innings.overs;
+    const currentBall = innings.balls + 1;
+
+    // Add ball to ball-by-ball
+    const ballData = {
+      over: currentOver,
+      ball: currentBall,
+      batsman: batsmanId || strikerId,
+      bowler: bowlerId,
+      runs: runs || 0,
+      isWicket: isWicket || false,
+      dismissalType: dismissalType || '',
+      extras: extras || '',
+      commentary: commentary || '',
+    };
+    
+    if (!innings.ballByBall) innings.ballByBall = [];
+    innings.ballByBall.push(ballData);
+
+    // Update innings totals
+    const isExtra = extras && (extras === 'wd' || extras === 'nb');
+    
+    if (!isExtra) {
+      innings.balls += 1;
+      if (innings.balls === 6) {
+        innings.overs += 1;
+        innings.balls = 0;
+      }
+    }
+
+    innings.runs += runs || 0;
+    
+    if (isExtra) {
+      innings.extras += 1;
+    }
+
+    // Update striker stats
+    const striker = innings.currentBatsmen.find(b => b.isStriker);
+    if (striker && !isExtra) {
+      striker.balls += 1;
+      striker.runs += runs || 0;
+      if (runs === 4) striker.fours += 1;
+      if (runs === 6) striker.sixes += 1;
+    }
+
+    // Update bowler stats
+    if (innings.currentBowler.player) {
+      if (!isExtra) {
+        innings.currentBowler.balls += 1;
+        if (innings.currentBowler.balls === 6) {
+          innings.currentBowler.overs += 1;
+          innings.currentBowler.balls = 0;
+        }
+      }
+      innings.currentBowler.runs += runs || 0;
+      if (isWicket) {
+        innings.currentBowler.wickets += 1;
+        innings.wickets += 1;
+        
+        // Add to fall of wickets
+        if (!innings.fallOfWickets) innings.fallOfWickets = [];
+        innings.fallOfWickets.push({
+          runs: innings.runs,
+          wicket: innings.wickets,
+          player: striker?.player,
+          over: innings.overs + (innings.balls / 10),
+        });
+        
+        // Remove striker from currentBatsmen on wicket
+        innings.currentBatsmen = innings.currentBatsmen.filter(b => !b.isStriker);
+      }
+    }
+
+    // Rotate strike on odd runs (1, 3, 5) or end of over - but NOT on wicket or 4/6
+    if (!isWicket && !isExtra && runs !== 4 && runs !== 6) {
+      if ((runs % 2 === 1) || innings.balls === 0) {
+        innings.currentBatsmen.forEach(b => b.isStriker = !b.isStriker);
+      }
+    }
+
+    match.status = 'live';
+    match.currentInnings = inningsNum;
+    
+    await match.save();
+    
+    const updatedMatch = await Match.findById(req.params.id)
+      .populate('teamA teamB')
+      .populate('innings1.currentBatsmen.player innings1.currentBowler.player innings2.currentBatsmen.player innings2.currentBowler.player', 'name');
+    
+    res.json(updatedMatch);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Update current players (batsmen/bowler) (admin)
+router.put('/:id/players', protect, adminOnly, async (req, res) => {
+  try {
+    const { inningsNum, strikerId, nonStrikerId, bowlerId } = req.body;
+    const match = await Match.findById(req.params.id);
+    if (!match) return res.status(404).json({ message: 'Match not found' });
+
+    const inningsKey = inningsNum === 1 ? 'innings1' : 'innings2';
+    if (!match[inningsKey]) {
+      match[inningsKey] = {
+        team: inningsNum === 1 ? match.teamA : match.teamB,
+        runs: 0,
+        wickets: 0,
+        overs: 0,
+        balls: 0,
+        currentBatsmen: [],
+        ballByBall: [],
+      };
+    }
+
+    const innings = match[inningsKey];
+
+    // Update batsmen
+    if (strikerId && nonStrikerId) {
+      const existingStriker = innings.currentBatsmen.find(b => b.player.toString() === strikerId);
+      const existingNonStriker = innings.currentBatsmen.find(b => b.player.toString() === nonStrikerId);
+
+      innings.currentBatsmen = [
+        existingStriker || { player: strikerId, runs: 0, balls: 0, fours: 0, sixes: 0, isStriker: true },
+        existingNonStriker || { player: nonStrikerId, runs: 0, balls: 0, fours: 0, sixes: 0, isStriker: false },
+      ];
+      
+      innings.currentBatsmen[0].isStriker = true;
+      innings.currentBatsmen[1].isStriker = false;
+    }
+
+    // Update bowler
+    if (bowlerId) {
+      const existingBowler = innings.bowling?.find(b => b.player.toString() === bowlerId);
+      innings.currentBowler = existingBowler || { player: bowlerId, overs: 0, balls: 0, runs: 0, wickets: 0 };
+    }
+
+    await match.save();
+    
+    const updatedMatch = await Match.findById(req.params.id)
+      .populate('teamA teamB')
+      .populate('innings1.currentBatsmen.player innings1.currentBowler.player innings2.currentBatsmen.player innings2.currentBowler.player', 'name');
+    
+    res.json(updatedMatch);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 // Complete match & update standings (admin)
 router.put('/:id/complete', protect, adminOnly, async (req, res) => {
   try {
