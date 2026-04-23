@@ -1,140 +1,84 @@
 'use client';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
-import Navbar from '@/components/Navbar';
-
-const cards = [
-  { 
-    href: '/admin/teams', 
-    icon: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-        <circle cx="9" cy="7" r="4"/>
-        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-      </svg>
-    ),
-    label: 'Manage Teams', 
-    desc: 'Add/edit 8 teams across Group A & B' 
-  },
-  { 
-    href: '/admin/players', 
-    icon: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-        <circle cx="12" cy="7" r="4"/>
-      </svg>
-    ),
-    label: 'Manage Players', 
-    desc: 'Add up to 8 players per team' 
-  },
-  { 
-    href: '/admin/matches', 
-    icon: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="12" cy="12" r="10"/>
-        <polyline points="12 6 12 12 16 14"/>
-      </svg>
-    ),
-    label: 'Manage Matches', 
-    desc: 'Schedule, score & complete matches' 
-  },
-  { 
-    href: '/admin/schedule', 
-    icon: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-        <line x1="16" y1="2" x2="16" y2="6"/>
-        <line x1="8" y1="2" x2="8" y2="6"/>
-        <line x1="3" y1="10" x2="21" y2="10"/>
-      </svg>
-    ),
-    label: 'Generate Schedule', 
-    desc: 'Auto-generate group stage fixtures' 
-  },
-];
+import AdminLayout from '@/components/AdminLayout';
+import { api } from '@/lib/api';
 
 export default function AdminDashboard() {
   const { user, loading } = useAuth();
   const router = useRouter();
+  const [stats, setStats] = useState({ teams: 0, players: 0, matches: 0, live: 0 });
 
   useEffect(() => {
     if (!loading && (!user || user.role !== 'admin')) router.push('/login');
   }, [user, loading, router]);
 
+  useEffect(() => {
+    if (!user) return;
+    Promise.all([api.get('/teams'), api.get('/players'), api.get('/matches')]).then(([teams, players, matches]) => {
+      setStats({
+        teams: Array.isArray(teams) ? teams.length : 0,
+        players: Array.isArray(players) ? players.length : 0,
+        matches: Array.isArray(matches) ? matches.length : 0,
+        live: Array.isArray(matches) ? matches.filter(x => x.status === 'live').length : 0,
+      });
+    });
+  }, [user]);
+
   if (loading || !user) return null;
 
+  const statCards = [
+    { label: 'Teams', value: stats.teams, icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" strokeWidth="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> },
+    { label: 'Players', value: stats.players, icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" strokeWidth="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> },
+    { label: 'Matches', value: stats.matches, icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" strokeWidth="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> },
+    { label: 'Live Now', value: stats.live, icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={stats.live > 0 ? 'var(--red)' : 'var(--text-muted)'} strokeWidth="1.8"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> },
+  ];
+
+  const actions = [
+    { href: '/admin/matches', label: 'Manage Matches', sub: 'Score & complete matches', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" strokeWidth="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> },
+    { href: '/admin/schedule', label: 'Generate Schedule', sub: 'Create fixtures & knockouts', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" strokeWidth="1.8"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> },
+    { href: '/admin/teams', label: 'Manage Teams', sub: 'Add/edit teams across groups', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" strokeWidth="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> },
+    { href: '/admin/players', label: 'Manage Players', sub: 'Add up to 7 players per team', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" strokeWidth="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> },
+  ];
+
   return (
-    <div className="min-h-screen" style={{ background: 'linear-gradient(135deg, #00061C 0%, #000D27 50%, #001333 100%)' }}>
-      <Navbar />
-      <div className="max-w-6xl mx-auto px-6 py-12">
-        {/* Header Section */}
-        <div className="mb-12 animate-fade-in">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold mb-4"
-            style={{ background: 'rgba(243, 197, 112, 0.1)', border: '1px solid rgba(243, 197, 112, 0.3)', color: '#F3C570' }}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <circle cx="12" cy="12" r="3"/>
-              <path d="M12 1v6m0 6v6m5.2-13.2l-4.2 4.2m0 6l4.2 4.2M23 12h-6m-6 0H1m18.2 5.2l-4.2-4.2m0-6l4.2-4.2"/>
-            </svg>
-            ADMIN CONTROL CENTER
-          </div>
-          <h1 className="text-4xl font-black mb-2 tracking-tight" style={{ color: '#ffffff' }}>
-            Tournament <span style={{ color: '#F3C570' }}>Management</span>
-          </h1>
-          <p className="text-base" style={{ color: '#A1BDCB' }}>Complete control over teams, players, matches and schedules</p>
+    <AdminLayout>
+      <div style={{ padding: '32px' }}>
+        <h1 style={{ color: 'var(--text-primary)', fontSize: '26px', fontWeight: 800, marginBottom: '6px', letterSpacing: '-0.02em' }}>Dashboard</h1>
+        <p style={{ color: 'var(--text-muted)', fontSize: '14px', marginBottom: '32px' }}>Live tournament overview & quick actions</p>
+
+        {/* Stats */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '32px' }}>
+          {statCards.map((s) => (
+            <div key={s.label} className="stat-card">
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+                <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'rgba(201, 162, 39, 0.06)', border: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{s.icon}</div>
+                {s.label === 'Live Now' && stats.live > 0 && <span className="pulse-dot" />}
+              </div>
+              <p style={{ color: 'var(--text-primary)', fontSize: '32px', fontWeight: 800, lineHeight: 1 }}>{s.value}</p>
+              <p style={{ color: 'var(--text-muted)', fontSize: '11px', fontWeight: 600, letterSpacing: '0.1em', marginTop: '8px', textTransform: 'uppercase' }}>{s.label}</p>
+            </div>
+          ))}
         </div>
 
-        {/* Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {cards.map((c, i) => (
-            <Link key={c.href} href={c.href}
-              className={`group relative rounded-2xl p-6 transition-all duration-300 hover:scale-105 hover:-translate-y-1 animate-slide-up animate-delay-${(i + 1) * 100}`}
-              style={{ 
-                background: 'linear-gradient(135deg, rgba(10, 22, 40, 0.8) 0%, rgba(10, 22, 40, 0.6) 100%)',
-                border: '1px solid rgba(243, 197, 112, 0.1)',
-                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
-                backdropFilter: 'blur(10px)'
-              }}>
-              {/* Glow effect on hover */}
-              <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                style={{ 
-                  background: 'radial-gradient(circle at top, rgba(243, 197, 112, 0.1), transparent)',
-                  pointerEvents: 'none'
-                }}></div>
-              
-              {/* Content */}
-              <div className="relative z-10">
-                <div className="mb-4 inline-flex p-3 rounded-xl transition-all duration-300 group-hover:scale-110"
-                  style={{ 
-                    background: 'rgba(243, 197, 112, 0.1)',
-                    border: '1px solid rgba(243, 197, 112, 0.2)',
-                    color: '#F3C570'
-                  }}>
-                  {c.icon}
-                </div>
-                <h3 className="font-bold text-base mb-2 transition-colors duration-300" 
-                  style={{ color: '#ffffff' }}>
-                  {c.label}
-                </h3>
-                <p className="text-sm leading-relaxed" style={{ color: '#A1BDCB' }}>
-                  {c.desc}
-                </p>
-                
-                {/* Arrow indicator */}
-                <div className="mt-4 flex items-center gap-2 text-xs font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                  style={{ color: '#F3C570' }}>
-                  <span>Open</span>
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                    <path d="M5 12h14M12 5l7 7-7 7"/>
-                  </svg>
+        {/* Actions */}
+        <p style={{ color: 'var(--text-muted)', fontSize: '10px', fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', marginBottom: '14px' }}>Quick Actions</p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '14px' }}>
+          {actions.map((a) => (
+            <Link key={a.href} href={a.href} style={{ textDecoration: 'none' }}>
+              <div className="card" style={{ padding: '22px', display: 'flex', alignItems: 'center', gap: '16px', cursor: 'pointer' }}>
+                <div style={{ width: '42px', height: '42px', borderRadius: '10px', background: 'rgba(201, 162, 39, 0.06)', border: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>{a.icon}</div>
+                <div>
+                  <p style={{ color: 'var(--gold)', fontSize: '14px', fontWeight: 700, marginBottom: '3px' }}>{a.label} →</p>
+                  <p style={{ color: 'var(--text-muted)', fontSize: '12px' }}>{a.sub}</p>
                 </div>
               </div>
             </Link>
           ))}
         </div>
       </div>
-    </div>
+    </AdminLayout>
   );
 }

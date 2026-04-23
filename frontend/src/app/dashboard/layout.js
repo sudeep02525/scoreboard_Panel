@@ -1,10 +1,9 @@
-import Navbar from '@/components/Navbar';
+import UserLayout from '@/components/UserLayout';
 
 export default function DashboardLayout({ children }) {
   return (
-    <div className="min-h-screen" style={{ background: '#00061C' }}>
-      <Navbar />
+    <UserLayout>
       {children}
-    </div>
+    </UserLayout>
   );
 }

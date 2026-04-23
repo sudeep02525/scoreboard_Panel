@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import Navbar from '@/components/Navbar';
+import UserLayout from '@/components/UserLayout';
 import MatchCard from '@/components/MatchCard';
 import { api } from '@/lib/api';
 
@@ -22,8 +22,7 @@ export default function MatchesPage() {
   const groupBMatches = filtered.filter((m) => m.group === 'B');
 
   return (
-    <div className="min-h-screen" style={{ background: '#00061C' }}>
-      <Navbar />
+    <UserLayout>
       <div className="max-w-5xl mx-auto px-4 py-8">
         <h1 className="text-2xl font-bold mb-6" style={{ color: '#F3C570' }}>🗓️ Matches</h1>
 
@@ -67,6 +66,6 @@ export default function MatchesPage() {
           </div>
         )}
       </div>
-    </div>
+    </UserLayout>
   );
 }

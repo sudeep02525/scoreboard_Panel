@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import Navbar from '@/components/Navbar';
+import UserLayout from '@/components/UserLayout';
 import StandingsTable from '@/components/StandingsTable';
 import { api } from '@/lib/api';
 
@@ -14,8 +14,7 @@ export default function StandingsPage() {
   }, []);
 
   return (
-    <div className="min-h-screen" style={{ background: '#00061C' }}>
-      <Navbar />
+    <UserLayout>
       <div className="max-w-4xl mx-auto px-4 py-8">
         <h1 className="text-2xl font-bold mb-6" style={{ color: '#F3C570' }}>📊 Group Standings</h1>
         <div className="grid gap-6 md:grid-cols-2">
@@ -27,6 +26,6 @@ export default function StandingsPage() {
           <p className="mt-1">P = Played | W = Won | L = Lost | Pts = Points | NRR = Net Run Rate</p>
         </div>
       </div>
-    </div>
+    </UserLayout>
   );
 }

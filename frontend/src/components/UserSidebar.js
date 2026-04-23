@@ -1,0 +1,99 @@
+'use client';
+import { Suspense } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { usePathname, useSearchParams, useRouter } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
+
+const navItems = [
+  { href: '/dashboard', label: 'Home', isHome: true, icon: 'home' },
+  { href: '/dashboard?tab=live', label: 'Live Matches', tab: 'live', icon: 'zap' },
+  { href: '/dashboard?tab=upcoming', label: 'Upcoming', tab: 'upcoming', icon: 'calendar' },
+  { href: '/dashboard?tab=results', label: 'Results', tab: 'results', icon: 'check' },
+  { href: '/dashboard?tab=standings', label: 'Standings', tab: 'standings', icon: 'bar' },
+];
+
+const icons = {
+  home: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>,
+  zap: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>,
+  calendar: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>,
+  check: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>,
+  bar: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>,
+  logout: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>,
+};
+
+export default function UserSidebar() {
+  return (
+    <Suspense fallback={<aside className="sidebar" />}>
+      <SidebarInner />
+    </Suspense>
+  );
+}
+
+function SidebarInner() {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const { user, logout } = useAuth();
+  const tab = searchParams ? searchParams.get('tab') : null;
+
+  const handleLogout = () => { logout(); router.push('/login'); };
+
+  const isActive = (item) => {
+    if (pathname !== '/dashboard') return false;
+    if (item.isHome) return !tab || tab === 'home';
+    return tab === item.tab;
+  };
+
+  return (
+    <aside className="sidebar">
+      {/* Logo */}
+      <div className="sidebar-logo-area">
+        <Image src="/logo.jpeg" alt="Logo" width={46} height={46} className="sidebar-logo-img" />
+        <div>
+          <p className="sidebar-brand-name">APL SCOREBOARD</p>
+          <p className="sidebar-brand-sub">Live Tournament</p>
+        </div>
+      </div>
+
+      <p className="sidebar-section-label">Navigation</p>
+
+      {/* Nav links */}
+      <nav className="sidebar-nav">
+        {navItems.map((item) => (
+          <Link key={item.href} href={item.href}
+            className={`sidebar-link ${isActive(item) ? 'active' : ''}`}>
+            {icons[item.icon]}
+            {item.label}
+          </Link>
+        ))}
+      </nav>
+
+      {/* Bottom */}
+      <div className="sidebar-bottom">
+        {user ? (
+          <>
+            <div className="sidebar-user-card">
+              <div className="sidebar-avatar">{user.name?.charAt(0)?.toUpperCase()}</div>
+              <div style={{ overflow: 'hidden' }}>
+                <p style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user.name}</p>
+                <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '1px' }}>Member</p>
+              </div>
+            </div>
+            <button onClick={handleLogout} className="sidebar-link" style={{ width: '100%', border: 'none', background: 'transparent' }}
+              onMouseEnter={e => e.currentTarget.style.color = 'var(--red)'}
+              onMouseLeave={e => e.currentTarget.style.color = 'var(--text-secondary)'}>
+              {icons.logout}
+              Sign Out
+            </button>
+          </>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', padding: '0 4px' }}>
+            <Link href="/login" className="sidebar-link" style={{ justifyContent: 'center' }}>Login</Link>
+            <Link href="/register" className="btn-gold" style={{ display: 'block', padding: '11px 16px', textAlign: 'center', textDecoration: 'none', fontSize: '14px' }}>Sign Up</Link>
+          </div>
+        )}
+      </div>
+    </aside>
+  );
+}

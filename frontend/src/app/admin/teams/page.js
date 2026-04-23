@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Navbar from '@/components/Navbar';
+import AdminLayout from '@/components/AdminLayout';
 import { useAuth } from '@/context/AuthContext';
 import { api } from '@/lib/api';
 
@@ -23,17 +23,8 @@ export default function AdminTeams() {
   const handleAdd = async (e) => {
     e.preventDefault();
     const res = await api.post('/teams', form);
-    if (res._id) { 
-      setMsg('Team added!'); 
-      const currentGroup = form.group; // Save current group
-      setForm({ name: '', group: currentGroup }); // Keep the same group selected
-      loadTeams(); 
-    }
+    if (res._id) { setMsg('Team added!'); setForm({ name: '', group: form.group }); loadTeams(); }
     else setMsg(res.message || 'Error');
-  };
-
-  const handleDelete = async (id) => {
-    setDeleteConfirm(id);
   };
 
   const confirmDelete = async () => {
@@ -47,82 +38,70 @@ export default function AdminTeams() {
   const groupB = teams.filter((t) => t.group === 'B');
 
   return (
-    <div className="min-h-screen" style={{ background: 'linear-gradient(135deg, #00061C 0%, #000D27 50%, #001333 100%)' }}>
-      <Navbar />
-      
-      {/* Delete Confirmation Modal */}
+    <AdminLayout>
       {deleteConfirm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-fade-in">
-          <div className="rounded-xl p-6 max-w-md w-full mx-4 animate-scale-in" 
-            style={{ background: '#0A1628', border: '2px solid #EF4444' }}>
-            <h3 className="text-lg font-bold mb-3" style={{ color: '#EF4444' }}>Delete Team?</h3>
-            <p className="text-sm mb-6" style={{ color: '#A1BDCB' }}>
-              Are you sure you want to delete this team? This action cannot be undone.
-            </p>
-            <div className="flex gap-3">
-              <button 
-                onClick={() => setDeleteConfirm(null)}
-                className="flex-1 px-4 py-2 rounded-lg font-bold text-sm transition hover:opacity-90"
-                style={{ background: '#1a2a4a', color: '#A1BDCB' }}>
-                Cancel
-              </button>
-              <button 
-                onClick={confirmDelete}
-                className="flex-1 px-4 py-2 rounded-lg font-bold text-sm transition hover:opacity-90"
-                style={{ background: '#EF4444', color: '#ffffff' }}>
-                Delete
-              </button>
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 50 }}>
+          <div className="card" style={{ padding: '28px', maxWidth: '380px', width: '100%', margin: '0 16px', border: '1px solid rgba(239,68,68,0.2)' }}>
+            <p style={{ color: 'var(--red)', fontWeight: 700, fontSize: '16px', marginBottom: '6px' }}>Delete Team?</p>
+            <p style={{ color: 'var(--text-muted)', fontSize: '13px', marginBottom: '24px' }}>This will also remove all players. This cannot be undone.</p>
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <button onClick={() => setDeleteConfirm(null)} className="btn-outline" style={{ flex: 1, padding: '10px', fontSize: '13px' }}>Cancel</button>
+              <button onClick={confirmDelete} style={{ flex: 1, padding: '10px', borderRadius: '10px', background: 'var(--red)', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: '13px' }}>Delete</button>
             </div>
           </div>
         </div>
       )}
 
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        <h1 className="text-2xl font-bold mb-6 animate-fade-in" style={{ color: '#F3C570' }}>Manage Teams</h1>
+      <div style={{ padding: '32px' }}>
+        <h1 style={{ color: 'var(--text-primary)', fontSize: '26px', fontWeight: 800, marginBottom: '6px', letterSpacing: '-0.02em' }}>Manage Teams</h1>
+        <p style={{ color: 'var(--text-muted)', fontSize: '14px', marginBottom: '32px' }}>Add and manage teams across groups</p>
 
-        <div className="rounded-xl p-5 mb-6 animate-slide-up animate-delay-100" style={{ background: '#0A1628', border: '1px solid #1a2a4a' }}>
-          <h2 className="font-semibold mb-3 text-sm" style={{ color: '#A1BDCB' }}>Add Team</h2>
-          {msg && <p className="text-sm mb-2" style={{ color: '#F3C570' }}>{msg}</p>}
-          <form onSubmit={handleAdd} className="flex gap-3 flex-wrap">
-            <input required value={form.name}
-              onChange={(e) => setForm({ ...form, name: e.target.value })}
-              placeholder="Team name"
-              className="rounded-lg px-3 py-2 flex-1 min-w-40 focus:outline-none text-sm"
-              style={{ background: '#000D27', border: '1px solid #1a2a4a', color: '#ffffff' }} />
-            <select value={form.group} onChange={(e) => setForm({ ...form, group: e.target.value })}
-              className="rounded-lg px-3 py-2 focus:outline-none text-sm"
-              style={{ background: '#000D27', border: '1px solid #1a2a4a', color: '#ffffff' }}>
+        <div className="card" style={{ padding: '24px', marginBottom: '24px' }}>
+          <p style={{ color: 'var(--text-muted)', fontSize: '10px', fontWeight: 700, marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.14em' }}>Add Team</p>
+          {msg && <div style={{ padding: '10px 14px', borderRadius: '10px', marginBottom: '16px', background: 'rgba(201, 162, 39, 0.04)', border: '1px solid var(--border-default)', color: 'var(--gold)', fontSize: '13px' }}>{msg}</div>}
+          <form onSubmit={handleAdd} style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+            <input required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })}
+              placeholder="Team name" className="input-field" style={{ flex: 1, minWidth: '180px' }} />
+            <select value={form.group} onChange={(e) => setForm({ ...form, group: e.target.value })} className="input-field" style={{ width: 'auto', cursor: 'pointer' }}>
               <option value="A">Group A</option>
               <option value="B">Group B</option>
             </select>
-            <button type="submit" className="px-4 py-2 rounded-lg font-bold text-sm transition"
-              style={{ background: '#F3C570', color: '#00061C' }}>Add Team</button>
+            <button type="submit" className="btn-gold" style={{ padding: '13px 28px', fontSize: '13px' }}>Add Team</button>
           </form>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2">
-          {['A', 'B'].map((g, i) => (
-            <div key={g} className={`rounded-xl p-4 animate-slide-up animate-delay-${(i + 2) * 100}`} style={{ background: '#0A1628', border: '1px solid #1a2a4a' }}>
-              <h2 className="font-bold mb-3 text-sm" style={{ color: '#F3C570' }}>
-                Group {g} ({(g === 'A' ? groupA : groupB).length}/4)
-              </h2>
-              <div className="space-y-2">
-                {(g === 'A' ? groupA : groupB).map((t) => (
-                  <div key={t._id} className="flex items-center justify-between p-2 rounded-lg"
-                    style={{ background: '#000D27', border: '1px solid #1a2a4a' }}>
-                    <div>
-                      <p className="font-medium text-sm" style={{ color: '#ffffff' }}>{t.name}</p>
-                      <p className="text-xs" style={{ color: '#A1BDCB' }}>{t.players?.length || 0}/8 players</p>
-                    </div>
-                    <button onClick={() => handleDelete(t._id)} className="text-xs px-2 py-1 rounded hover:opacity-70" style={{ color: '#EF4444' }}>Delete</button>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+          {['A', 'B'].map((g) => {
+            const grp = g === 'A' ? groupA : groupB;
+            return (
+              <div key={g} className="card" style={{ padding: '22px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'var(--gold)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', fontWeight: 800, color: 'var(--bg-primary)' }}>{g}</div>
+                    <p style={{ color: 'var(--gold)', fontSize: '14px', fontWeight: 700 }}>Group {g}</p>
                   </div>
-                ))}
-                {(g === 'A' ? groupA : groupB).length === 0 && <p className="text-xs" style={{ color: '#1a2a4a' }}>No teams yet</p>}
+                  <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-muted)' }}>{grp.length}/4</span>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  {grp.map((t) => (
+                    <div key={t._id} style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-subtle)', borderRadius: '10px', padding: '13px 14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', transition: 'border-color 0.15s' }}>
+                      <div>
+                        <p style={{ color: 'var(--text-primary)', fontSize: '13px', fontWeight: 600 }}>{t.name}</p>
+                        <p style={{ color: 'var(--text-muted)', fontSize: '11px', marginTop: '2px' }}>{t.players?.length || 0}/7 players</p>
+                      </div>
+                      <button onClick={() => setDeleteConfirm(t._id)}
+                        style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-dim)', fontSize: '12px', fontWeight: 600, padding: '4px 8px', borderRadius: '4px', transition: 'color 0.15s' }}
+                        onMouseEnter={e => e.currentTarget.style.color = 'var(--red)'}
+                        onMouseLeave={e => e.currentTarget.style.color = 'var(--text-dim)'}>Delete</button>
+                    </div>
+                  ))}
+                  {grp.length === 0 && <p style={{ color: 'var(--text-dim)', fontSize: '12px', padding: '8px 0' }}>No teams yet</p>}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
-    </div>
+    </AdminLayout>
   );
 }

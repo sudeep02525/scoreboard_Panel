@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import Navbar from '@/components/Navbar';
+import UserLayout from '@/components/UserLayout';
 import { api } from '@/lib/api';
 
 export default function MatchDetailPage() {
@@ -16,10 +16,9 @@ export default function MatchDetailPage() {
   }, [id]);
 
   if (!match) return (
-    <div className="min-h-screen" style={{ background: '#00061C' }}>
-      <Navbar />
+    <UserLayout>
       <div className="flex items-center justify-center h-64" style={{ color: '#A1BDCB' }}>Loading match...</div>
-    </div>
+    </UserLayout>
   );
 
   const renderInnings = (innings, label) => {
@@ -88,8 +87,7 @@ export default function MatchDetailPage() {
   };
 
   return (
-    <div className="min-h-screen" style={{ background: '#00061C' }}>
-      <Navbar />
+    <UserLayout>
       <div className="max-w-3xl mx-auto px-4 py-8">
         {/* Match Header */}
         <div className="rounded-2xl p-6 mb-6 text-center"
@@ -122,6 +120,6 @@ export default function MatchDetailPage() {
         {renderInnings(match.innings1, `${match.teamA?.name} Innings`)}
         {renderInnings(match.innings2, `${match.teamB?.name} Innings`)}
       </div>
-    </div>
+    </UserLayout>
   );
 }

@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import Navbar from '@/components/Navbar';
+import AdminLayout from '@/components/AdminLayout';
 import { useAuth } from '@/context/AuthContext';
 import { api } from '@/lib/api';
 
@@ -122,9 +122,9 @@ export default function AdminMatches() {
   };
 
   const statusColor = { 
-    live: { color: '#EF4444', bg: 'rgba(239, 68, 68, 0.1)' }, 
-    scheduled: { color: '#A1BDCB', bg: 'rgba(161, 189, 203, 0.1)' }, 
-    completed: { color: '#1a2a4a', bg: 'rgba(26, 42, 74, 0.1)' } 
+    live: { color: '#ef4444', bg: 'rgba(239, 68, 68, 0.1)' }, 
+    scheduled: { color: '#8aacbf', bg: 'rgba(161, 189, 203, 0.1)' }, 
+    completed: { color: 'rgba(255,255,255,0.1)', bg: 'rgba(26, 42, 74, 0.1)' } 
   };
 
   // Group matches by stage
@@ -134,69 +134,40 @@ export default function AdminMatches() {
   const finalMatches = matches.filter(m => m.stage === 'final');
 
   const MatchCard = ({ m }) => (
-    <div className="rounded-xl p-4 flex items-center justify-between gap-4"
-      style={{ background: '#0A1628', border: '1px solid #1a2a4a' }}>
-      <div className="flex-1">
-        <p className="font-semibold text-sm" style={{ color: '#ffffff' }}>{m.teamA?.name} vs {m.teamB?.name}</p>
-        <p className="text-xs" style={{ color: '#A1BDCB' }}>{m.ground} • Round {m.round || '-'} • {m.overs} overs</p>
+    <div style={{ background: '#112240', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '8px', padding: '14px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
+      <div style={{ flex: 1 }}>
+        <p style={{ color: '#ffffff', fontSize: '13px', fontWeight: 600 }}>{m.teamA?.name} vs {m.teamB?.name}</p>
+        <p style={{ color: '#4a6a82', fontSize: '11px', marginTop: '2px' }}>{m.ground} • Round {m.round || '-'} • {m.overs} overs</p>
       </div>
-      <span className="text-xs font-semibold capitalize px-2 py-1 rounded"
-        style={{ color: statusColor[m.status].color, background: statusColor[m.status].bg }}>
+      <span style={{ fontSize: '11px', fontWeight: 600, textTransform: 'capitalize', padding: '3px 8px', borderRadius: '4px',
+        color: m.status === 'live' ? '#ef4444' : m.status === 'completed' ? '#4a6a82' : '#8aacbf',
+        background: m.status === 'live' ? 'rgba(239,68,68,0.1)' : m.status === 'completed' ? 'rgba(74,106,130,0.1)' : 'rgba(138,172,191,0.1)' }}>
         {m.status}
       </span>
-      <div className="flex gap-2">
+      <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
         {m.status === 'scheduled' && (
           <>
-            <button onClick={() => setStatus(m._id, 'live')}
-              className="text-xs px-3 py-1.5 rounded-lg transition hover:opacity-90 font-bold"
-              style={{ background: '#EF4444', color: '#ffffff' }}>
-              Start Live
-            </button>
-            <button onClick={() => handleEdit(m)}
-              className="text-xs px-3 py-1.5 rounded-lg transition hover:opacity-90 font-bold"
-              style={{ background: '#A1BDCB', color: '#00061C' }}>
-              Edit
-            </button>
+            <button onClick={() => setStatus(m._id, 'live')} style={{ padding: '5px 10px', borderRadius: '5px', background: '#ef4444', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: '11px' }}>Start Live</button>
+            <button onClick={() => handleEdit(m)} style={{ padding: '5px 10px', borderRadius: '5px', background: 'rgba(255,255,255,0.1)', color: '#8aacbf', border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: '11px' }}>Edit</button>
           </>
         )}
         {m.status === 'live' && (
-          <Link href={`/admin/matches/${m._id}/score`}
-            className="text-xs px-3 py-1.5 rounded-lg transition hover:opacity-90 font-bold"
-            style={{ background: '#F3C570', color: '#00061C' }}>
-            Update Score
-          </Link>
+          <Link href={`/admin/matches/${m._id}/score`} style={{ padding: '5px 10px', borderRadius: '5px', background: '#c9a227', color: '#0a1628', textDecoration: 'none', fontWeight: 600, fontSize: '11px' }}>Update Score</Link>
         )}
         {m.status !== 'completed' && (
-          <Link href={`/admin/matches/${m._id}/complete`}
-            className="text-xs px-3 py-1.5 rounded-lg transition hover:opacity-90 font-bold"
-            style={{ background: '#A1BDCB', color: '#00061C' }}>
-            Complete
-          </Link>
+          <Link href={`/admin/matches/${m._id}/complete`} style={{ padding: '5px 10px', borderRadius: '5px', background: 'rgba(255,255,255,0.1)', color: '#8aacbf', textDecoration: 'none', fontWeight: 600, fontSize: '11px' }}>Complete</Link>
         )}
-        <button onClick={() => handleDelete(m._id)}
-          className="text-xs px-3 py-1.5 rounded-lg transition hover:opacity-90 font-bold"
-          style={{ background: 'rgba(239, 68, 68, 0.2)', color: '#EF4444', border: '1px solid rgba(239, 68, 68, 0.3)' }}>
-          Delete
-        </button>
+        <button onClick={() => handleDelete(m._id)} style={{ padding: '5px 10px', borderRadius: '5px', background: 'rgba(239,68,68,0.1)', color: '#ef4444', border: '1px solid rgba(239,68,68,0.2)', cursor: 'pointer', fontWeight: 600, fontSize: '11px' }}>Delete</button>
       </div>
     </div>
   );
 
-  const StageSection = ({ title, matches, icon, delay = 0 }) => {
+  const StageSection = ({ title, matches }) => {
     if (matches.length === 0) return null;
     return (
-      <div className={`animate-slide-up animate-delay-${delay}`}>
-        <div className="flex items-center gap-3 mb-4">
-          <div className="p-2 rounded-lg" style={{ background: 'rgba(243, 197, 112, 0.1)', color: '#F3C570' }}>
-            {icon}
-          </div>
-          <h2 className="text-lg font-bold" style={{ color: '#F3C570' }}>{title}</h2>
-          <span className="text-xs px-2 py-1 rounded-full font-semibold" 
-            style={{ background: 'rgba(161, 189, 203, 0.1)', color: '#A1BDCB' }}>
-            {matches.length} {matches.length === 1 ? 'match' : 'matches'}
-          </span>
-        </div>
-        <div className="space-y-3 mb-8">
+      <div style={{ marginBottom: '24px' }}>
+        <p style={{ color: '#c9a227', fontSize: '13px', fontWeight: 600, marginBottom: '10px' }}>{title} <span style={{ color: '#4a6a82', fontWeight: 400 }}>({matches.length})</span></p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           {matches.map((m) => <MatchCard key={m._id} m={m} />)}
         </div>
       </div>
@@ -204,86 +175,60 @@ export default function AdminMatches() {
   };
 
   return (
-    <div className="min-h-screen" style={{ background: 'linear-gradient(135deg, #00061C 0%, #000D27 50%, #001333 100%)' }}>
-      <Navbar />
-      
-      {/* Delete Confirmation Modal */}
+    <AdminLayout>
       {deleteConfirm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-fade-in">
-          <div className="rounded-xl p-6 max-w-md w-full mx-4 animate-scale-in" 
-            style={{ background: '#0A1628', border: '2px solid #EF4444' }}>
-            <h3 className="text-lg font-bold mb-3" style={{ color: '#EF4444' }}>Delete Match?</h3>
-            <p className="text-sm mb-6" style={{ color: '#A1BDCB' }}>
-              Are you sure you want to delete this match? This action cannot be undone.
-            </p>
-            <div className="flex gap-3">
-              <button 
-                onClick={() => setDeleteConfirm(null)}
-                className="flex-1 px-4 py-2 rounded-lg font-bold text-sm transition hover:opacity-90"
-                style={{ background: '#1a2a4a', color: '#A1BDCB' }}>
-                Cancel
-              </button>
-              <button 
-                onClick={confirmDelete}
-                className="flex-1 px-4 py-2 rounded-lg font-bold text-sm transition hover:opacity-90"
-                style={{ background: '#EF4444', color: '#ffffff' }}>
-                Delete
-              </button>
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 50 }}>
+          <div style={{ background: '#112240', border: '1px solid rgba(239,68,68,0.4)', borderRadius: '10px', padding: '24px', maxWidth: '360px', width: '100%', margin: '0 16px' }}>
+            <p style={{ color: '#ef4444', fontWeight: 700, fontSize: '15px', marginBottom: '8px' }}>Delete Match?</p>
+            <p style={{ color: '#4a6a82', fontSize: '13px', marginBottom: '20px' }}>This action cannot be undone.</p>
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <button onClick={() => setDeleteConfirm(null)} style={{ flex: 1, padding: '8px', borderRadius: '6px', background: 'rgba(255,255,255,0.1)', color: '#8aacbf', border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: '13px' }}>Cancel</button>
+              <button onClick={confirmDelete} style={{ flex: 1, padding: '8px', borderRadius: '6px', background: '#ef4444', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: '13px' }}>Delete</button>
             </div>
           </div>
         </div>
       )}
 
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        <div className="flex items-center justify-between mb-6 animate-fade-in">
-          <h1 className="text-2xl font-bold" style={{ color: '#F3C570' }}>Manage Matches</h1>
-          <button 
-            onClick={() => {
+      <div style={{ padding: '28px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
+          <div>
+            <h1 style={{ color: '#ffffff', fontSize: '22px', fontWeight: 700, marginBottom: '4px' }}>Manage Matches</h1>
+            <p style={{ color: '#4a6a82', fontSize: '13px' }}>Schedule, score and complete matches</p>
+          </div>
+          <button onClick={() => {
               if (showCreateForm && editingMatch) {
                 setEditingMatch(null);
-                setForm({
-                  teamA: '',
-                  teamB: '',
-                  stage: 'group',
-                  group: 'A',
-                  ground: 'Ground 1',
-                  overs: 5,
-                  date: '',
-                  round: 1,
-                });
+                setForm({ teamA: '', teamB: '', stage: 'group', group: 'A', ground: 'Ground 1', overs: 5, date: '', round: 1 });
               }
               setShowCreateForm(!showCreateForm);
             }}
-            className="px-4 py-2 rounded-lg font-bold text-sm transition hover:opacity-90"
-            style={{ background: '#F3C570', color: '#00061C' }}>
+            style={{ padding: '8px 20px', borderRadius: '6px', background: '#c9a227', color: '#0a1628', border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: '13px' }}>
             {showCreateForm ? 'Cancel' : '+ Create Match'}
           </button>
         </div>
 
         {msg && (
-          <div className="mb-4 p-3 rounded-lg text-sm animate-fade-in" 
-            style={{ background: 'rgba(243, 197, 112, 0.1)', color: '#F3C570', border: '1px solid rgba(243, 197, 112, 0.3)' }}>
+          <div style={{ background: 'rgba(201,162,39,0.1)', color: '#c9a227', border: '1px solid rgba(201,162,39,0.3)', borderRadius: '6px', padding: '10px 14px', fontSize: '13px', marginBottom: '16px' }}>
             {msg}
           </div>
         )}
 
-        {/* Create Match Form */}
         {showCreateForm && (
-          <div className="rounded-xl p-5 mb-6 animate-slide-up" style={{ background: '#0A1628', border: '1px solid #1a2a4a' }}>
-            <h2 className="font-semibold mb-4 text-sm" style={{ color: '#A1BDCB' }}>
+          <div style={{ background: '#112240', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '10px', padding: '20px', marginBottom: '20px' }}>
+            <p style={{ color: '#8aacbf', fontSize: '12px', fontWeight: 600, marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
               {editingMatch ? 'Edit Match' : 'Create New Match'}
-            </h2>
+            </p>
             
             <form onSubmit={handleCreateMatch} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-medium mb-1" style={{ color: '#A1BDCB' }}>Team A</label>
+                  <label className="block text-xs font-medium mb-1" style={{ color: '#8aacbf' }}>Team A</label>
                   <select 
                     required 
                     value={form.teamA}
                     onChange={(e) => setForm({ ...form, teamA: e.target.value })}
                     className="w-full rounded-lg px-3 py-2 focus:outline-none text-sm"
-                    style={{ background: '#000D27', border: '1px solid #1a2a4a', color: '#ffffff' }}>
+                    style={{ background: '#0a1628', border: '1px solid rgba(255,255,255,0.1)', color: '#ffffff' }}>
                     <option value="">Select Team A</option>
                     {teams.map((t) => (
                       <option key={t._id} value={t._id}>{t.name} (Group {t.group})</option>
@@ -292,13 +237,13 @@ export default function AdminMatches() {
                 </div>
                 
                 <div>
-                  <label className="block text-xs font-medium mb-1" style={{ color: '#A1BDCB' }}>Team B</label>
+                  <label className="block text-xs font-medium mb-1" style={{ color: '#8aacbf' }}>Team B</label>
                   <select 
                     required 
                     value={form.teamB}
                     onChange={(e) => setForm({ ...form, teamB: e.target.value })}
                     className="w-full rounded-lg px-3 py-2 focus:outline-none text-sm"
-                    style={{ background: '#000D27', border: '1px solid #1a2a4a', color: '#ffffff' }}>
+                    style={{ background: '#0a1628', border: '1px solid rgba(255,255,255,0.1)', color: '#ffffff' }}>
                     <option value="">Select Team B</option>
                     {teams.map((t) => (
                       <option key={t._id} value={t._id}>{t.name} (Group {t.group})</option>
@@ -309,7 +254,7 @@ export default function AdminMatches() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-medium mb-1" style={{ color: '#A1BDCB' }}>Match Type</label>
+                  <label className="block text-xs font-medium mb-1" style={{ color: '#8aacbf' }}>Match Type</label>
                   <select 
                     value={form.stage}
                     onChange={(e) => {
@@ -322,7 +267,7 @@ export default function AdminMatches() {
                       });
                     }}
                     className="w-full rounded-lg px-3 py-2 focus:outline-none text-sm"
-                    style={{ background: '#000D27', border: '1px solid #1a2a4a', color: '#ffffff' }}>
+                    style={{ background: '#0a1628', border: '1px solid rgba(255,255,255,0.1)', color: '#ffffff' }}>
                     <option value="group">Group Stage</option>
                     <option value="semi">Semi Final</option>
                     <option value="final">Final</option>
@@ -330,7 +275,7 @@ export default function AdminMatches() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium mb-1" style={{ color: '#A1BDCB' }}>
+                  <label className="block text-xs font-medium mb-1" style={{ color: '#8aacbf' }}>
                     {form.stage === 'group' ? 'Group' : form.stage === 'semi' ? 'Semi Final' : 'Match'}
                   </label>
                   {form.stage === 'group' ? (
@@ -338,7 +283,7 @@ export default function AdminMatches() {
                       value={form.group}
                       onChange={(e) => setForm({ ...form, group: e.target.value })}
                       className="w-full rounded-lg px-3 py-2 focus:outline-none text-sm"
-                      style={{ background: '#000D27', border: '1px solid #1a2a4a', color: '#ffffff' }}>
+                      style={{ background: '#0a1628', border: '1px solid rgba(255,255,255,0.1)', color: '#ffffff' }}>
                       <option value="A">Group A</option>
                       <option value="B">Group B</option>
                     </select>
@@ -347,7 +292,7 @@ export default function AdminMatches() {
                       value={form.group}
                       onChange={(e) => setForm({ ...form, group: e.target.value })}
                       className="w-full rounded-lg px-3 py-2 focus:outline-none text-sm"
-                      style={{ background: '#000D27', border: '1px solid #1a2a4a', color: '#ffffff' }}>
+                      style={{ background: '#0a1628', border: '1px solid rgba(255,255,255,0.1)', color: '#ffffff' }}>
                       <option value="Semi Final 1">Semi Final 1</option>
                       <option value="Semi Final 2">Semi Final 2</option>
                     </select>
@@ -357,7 +302,7 @@ export default function AdminMatches() {
                       value="Final"
                       disabled
                       className="w-full rounded-lg px-3 py-2 text-sm"
-                      style={{ background: '#000D27', border: '1px solid #1a2a4a', color: '#A1BDCB' }}
+                      style={{ background: '#0a1628', border: '1px solid rgba(255,255,255,0.1)', color: '#8aacbf' }}
                     />
                   )}
                 </div>
@@ -365,19 +310,19 @@ export default function AdminMatches() {
 
               <div className="grid grid-cols-4 gap-4">
                 <div>
-                  <label className="block text-xs font-medium mb-1" style={{ color: '#A1BDCB' }}>Ground</label>
+                  <label className="block text-xs font-medium mb-1" style={{ color: '#8aacbf' }}>Ground</label>
                   <select 
                     value={form.ground}
                     onChange={(e) => setForm({ ...form, ground: e.target.value })}
                     className="w-full rounded-lg px-3 py-2 focus:outline-none text-sm"
-                    style={{ background: '#000D27', border: '1px solid #1a2a4a', color: '#ffffff' }}>
+                    style={{ background: '#0a1628', border: '1px solid rgba(255,255,255,0.1)', color: '#ffffff' }}>
                     <option value="Ground 1">Ground 1</option>
                     <option value="Ground 2">Ground 2</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium mb-1" style={{ color: '#A1BDCB' }}>Overs</label>
+                  <label className="block text-xs font-medium mb-1" style={{ color: '#8aacbf' }}>Overs</label>
                   <input 
                     type="number" 
                     min="1" 
@@ -385,13 +330,13 @@ export default function AdminMatches() {
                     value={form.overs}
                     onChange={(e) => setForm({ ...form, overs: Number(e.target.value) })}
                     className="w-full rounded-lg px-3 py-2 focus:outline-none text-sm"
-                    style={{ background: '#000D27', border: '1px solid #1a2a4a', color: '#ffffff' }}
+                    style={{ background: '#0a1628', border: '1px solid rgba(255,255,255,0.1)', color: '#ffffff' }}
                   />
                 </div>
 
                 {form.stage === 'group' && (
                   <div>
-                    <label className="block text-xs font-medium mb-1" style={{ color: '#A1BDCB' }}>Round</label>
+                    <label className="block text-xs font-medium mb-1" style={{ color: '#8aacbf' }}>Round</label>
                     <input 
                       type="number" 
                       min="1" 
@@ -399,19 +344,19 @@ export default function AdminMatches() {
                       value={form.round}
                       onChange={(e) => setForm({ ...form, round: Number(e.target.value) })}
                       className="w-full rounded-lg px-3 py-2 focus:outline-none text-sm"
-                      style={{ background: '#000D27', border: '1px solid #1a2a4a', color: '#ffffff' }}
+                      style={{ background: '#0a1628', border: '1px solid rgba(255,255,255,0.1)', color: '#ffffff' }}
                     />
                   </div>
                 )}
 
                 <div className={form.stage === 'group' ? '' : 'col-span-2'}>
-                  <label className="block text-xs font-medium mb-1" style={{ color: '#A1BDCB' }}>Date</label>
+                  <label className="block text-xs font-medium mb-1" style={{ color: '#8aacbf' }}>Date</label>
                   <input 
                     type="date"
                     value={form.date}
                     onChange={(e) => setForm({ ...form, date: e.target.value })}
                     className="w-full rounded-lg px-3 py-2 focus:outline-none text-sm"
-                    style={{ background: '#000D27', border: '1px solid #1a2a4a', color: '#ffffff' }}
+                    style={{ background: '#0a1628', border: '1px solid rgba(255,255,255,0.1)', color: '#ffffff' }}
                   />
                 </div>
               </div>
@@ -419,7 +364,7 @@ export default function AdminMatches() {
               <button 
                 type="submit"
                 className="w-full px-4 py-2.5 rounded-lg font-bold text-sm transition hover:opacity-90"
-                style={{ background: '#F3C570', color: '#00061C' }}>
+                style={{ background: '#c9a227', color: '#0a1628' }}>
                 {editingMatch ? 'Update Match' : 'Create Match'}
               </button>
             </form>
@@ -427,8 +372,8 @@ export default function AdminMatches() {
         )}
 
         {matches.length === 0 ? (
-          <div className="rounded-xl p-6 text-center animate-slide-up animate-delay-100" style={{ background: '#0A1628', border: '1px solid #1a2a4a' }}>
-            <p style={{ color: '#A1BDCB' }}>No matches yet. <Link href="/admin/schedule" className="underline" style={{ color: '#F3C570' }}>Generate schedule first</Link></p>
+          <div className="rounded-xl p-6 text-center animate-slide-up animate-delay-100" style={{ background: '#112240', border: '1px solid rgba(255,255,255,0.1)' }}>
+            <p style={{ color: '#8aacbf' }}>No matches yet. <Link href="/admin/schedule" className="underline" style={{ color: '#c9a227' }}>Generate schedule first</Link></p>
           </div>
         ) : (
           <>
@@ -489,6 +434,6 @@ export default function AdminMatches() {
           </>
         )}
       </div>
-    </div>
+    </AdminLayout>
   );
 }

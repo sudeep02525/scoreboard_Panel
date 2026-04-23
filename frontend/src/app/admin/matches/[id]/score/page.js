@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import Navbar from '@/components/Navbar';
+import AdminLayout from '@/components/AdminLayout';
 import { useAuth } from '@/context/AuthContext';
 import { api } from '@/lib/api';
 
@@ -128,13 +128,12 @@ export default function ScorePage() {
 
   if (!match) {
     return (
-      <div className="min-h-screen" style={{ background: 'linear-gradient(135deg, #00061C 0%, #000D27 50%, #001333 100%)' }}>
-        <Navbar />
+      <AdminLayout>
         <div className="flex items-center justify-center py-16">
           <div className="w-8 h-8 rounded-full border-2 border-t-transparent animate-spin"
             style={{ borderColor: '#F3C570', borderTopColor: 'transparent' }}></div>
         </div>
-      </div>
+      </AdminLayout>
     );
   }
 
@@ -153,9 +152,8 @@ export default function ScorePage() {
   const recentBalls = innings?.ballByBall?.slice(-6) || [];
 
   return (
-    <div className="min-h-screen" style={{ background: 'linear-gradient(135deg, #00061C 0%, #000D27 50%, #001333 100%)' }}>
-      <Navbar />
-      <div className="max-w-4xl mx-auto px-4 py-6">
+    <AdminLayout>
+      <div className="px-6 py-6">
         {/* Header */}
         <div className="mb-6 animate-fade-in">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold mb-3"
@@ -168,7 +166,7 @@ export default function ScorePage() {
           <h1 className="text-2xl font-bold mb-1" style={{ color: '#F3C570' }}>
             {match.teamA?.name} vs {match.teamB?.name}
           </h1>
-          <p className="text-sm" style={{ color: '#A1BDCB' }}>{match.group} • {match.ground}</p>
+          <p className="text-sm" style={{ color: '#8aacbf' }}>{match.group} • {match.ground}</p>
         </div>
 
         {/* Innings selector */}
@@ -177,8 +175,8 @@ export default function ScorePage() {
             <button key={n} onClick={() => handleInningsSwitch(n)}
               className="flex-1 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300"
               style={inningsNum === n
-                ? { background: '#F3C570', color: '#00061C' }
-                : { background: '#0A1628', color: '#A1BDCB', border: '1px solid #1a2a4a' }}>
+                ? { background: '#c9a227', color: '#0a1628' }
+                : { background: '#112240', color: '#8aacbf', border: '1px solid rgba(255,255,255,0.1)' }}>
               Innings {n} — {n === 1 ? match.teamA?.name : match.teamB?.name}
             </button>
           ))}
@@ -196,62 +194,62 @@ export default function ScorePage() {
 
         {/* Scoreboard */}
         <div className="rounded-xl p-6 mb-4 animate-slide-up animate-delay-200"
-          style={{ background: '#0A1628', border: '1px solid #1a2a4a' }}>
+          style={{ background: '#112240', border: '1px solid rgba(255,255,255,0.1)' }}>
           
           {/* Team Info & Score */}
           <div className="flex items-center justify-between mb-6 pb-4" style={{ borderBottom: '1px solid #1a2a4a' }}>
             <div>
-              <p className="text-xs font-semibold mb-1" style={{ color: '#A1BDCB' }}>BATTING</p>
+              <p className="text-xs font-semibold mb-1" style={{ color: '#8aacbf' }}>BATTING</p>
               <p className="font-bold text-xl" style={{ color: '#F3C570' }}>{battingTeam?.name}</p>
             </div>
             <div className="text-center">
               <p className="text-4xl font-black" style={{ color: '#ffffff' }}>
                 {innings?.runs || 0}/{innings?.wickets || 0}
               </p>
-              <p className="text-sm font-semibold mt-1" style={{ color: '#A1BDCB' }}>
+              <p className="text-sm font-semibold mt-1" style={{ color: '#8aacbf' }}>
                 ({innings?.overs || 0}.{innings?.balls || 0} overs)
               </p>
             </div>
             <div className="text-right">
-              <p className="text-xs font-semibold mb-1" style={{ color: '#A1BDCB' }}>BOWLING</p>
+              <p className="text-xs font-semibold mb-1" style={{ color: '#8aacbf' }}>BOWLING</p>
               <p className="font-bold text-xl" style={{ color: '#ffffff' }}>{bowlingTeam?.name}</p>
             </div>
           </div>
 
           {/* Current Batsmen */}
           <div className="grid grid-cols-2 gap-4 mb-4">
-            <div className="rounded-lg p-3" style={{ background: '#000D27', border: '1px solid #1a2a4a' }}>
+            <div className="rounded-lg p-3" style={{ background: '#0a1628', border: '1px solid rgba(255,255,255,0.1)' }}>
               <div className="flex items-center justify-between mb-2">
-                <p className="text-xs font-semibold" style={{ color: '#A1BDCB' }}>STRIKER</p>
-                {striker && <span className="text-xs px-2 py-0.5 rounded" style={{ background: '#F3C570', color: '#00061C' }}>*</span>}
+                <p className="text-xs font-semibold" style={{ color: '#8aacbf' }}>STRIKER</p>
+                {striker && <span className="text-xs px-2 py-0.5 rounded" style={{ background: '#c9a227', color: '#0a1628' }}>*</span>}
               </div>
               <select value={strikerId} onChange={(e) => { setStrikerId(e.target.value); handleSetPlayers(); }}
                 className="w-full rounded-lg px-2 py-2 focus:outline-none text-sm font-semibold mb-2"
-                style={{ background: '#0A1628', border: '1px solid #1a2a4a', color: '#ffffff' }}>
+                style={{ background: '#112240', border: '1px solid rgba(255,255,255,0.1)', color: '#ffffff' }}>
                 <option value="">Select striker</option>
                 {battingPlayers.map(p => (
                   <option key={p._id} value={p._id}>{p.name}</option>
                 ))}
               </select>
               {striker && (
-                <p className="text-xs" style={{ color: '#A1BDCB' }}>
+                <p className="text-xs" style={{ color: '#8aacbf' }}>
                   {striker.runs}({striker.balls}) • 4s: {striker.fours} • 6s: {striker.sixes}
                 </p>
               )}
             </div>
 
-            <div className="rounded-lg p-3" style={{ background: '#000D27', border: '1px solid #1a2a4a' }}>
-              <p className="text-xs font-semibold mb-2" style={{ color: '#A1BDCB' }}>NON-STRIKER</p>
+            <div className="rounded-lg p-3" style={{ background: '#0a1628', border: '1px solid rgba(255,255,255,0.1)' }}>
+              <p className="text-xs font-semibold mb-2" style={{ color: '#8aacbf' }}>NON-STRIKER</p>
               <select value={nonStrikerId} onChange={(e) => { setNonStrikerId(e.target.value); handleSetPlayers(); }}
                 className="w-full rounded-lg px-2 py-2 focus:outline-none text-sm font-semibold mb-2"
-                style={{ background: '#0A1628', border: '1px solid #1a2a4a', color: '#ffffff' }}>
+                style={{ background: '#112240', border: '1px solid rgba(255,255,255,0.1)', color: '#ffffff' }}>
                 <option value="">Select non-striker</option>
                 {battingPlayers.filter(p => p._id !== strikerId).map(p => (
                   <option key={p._id} value={p._id}>{p.name}</option>
                 ))}
               </select>
               {nonStriker && (
-                <p className="text-xs" style={{ color: '#A1BDCB' }}>
+                <p className="text-xs" style={{ color: '#8aacbf' }}>
                   {nonStriker.runs}({nonStriker.balls}) • 4s: {nonStriker.fours} • 6s: {nonStriker.sixes}
                 </p>
               )}
@@ -259,18 +257,18 @@ export default function ScorePage() {
           </div>
 
           {/* Current Bowler */}
-          <div className="rounded-lg p-3 mb-4" style={{ background: '#000D27', border: '1px solid #1a2a4a' }}>
-            <p className="text-xs font-semibold mb-2" style={{ color: '#A1BDCB' }}>CURRENT BOWLER</p>
+          <div className="rounded-lg p-3 mb-4" style={{ background: '#0a1628', border: '1px solid rgba(255,255,255,0.1)' }}>
+            <p className="text-xs font-semibold mb-2" style={{ color: '#8aacbf' }}>CURRENT BOWLER</p>
             <select value={bowlerId} onChange={(e) => { setBowlerId(e.target.value); handleSetPlayers(); }}
               className="w-full rounded-lg px-2 py-2 focus:outline-none text-sm font-semibold mb-2"
-              style={{ background: '#0A1628', border: '1px solid #1a2a4a', color: '#ffffff' }}>
+              style={{ background: '#112240', border: '1px solid rgba(255,255,255,0.1)', color: '#ffffff' }}>
               <option value="">Select bowler</option>
               {bowlingPlayers.map(p => (
                 <option key={p._id} value={p._id}>{p.name}</option>
               ))}
             </select>
             {currentBowler && (
-              <p className="text-xs" style={{ color: '#A1BDCB' }}>
+              <p className="text-xs" style={{ color: '#8aacbf' }}>
                 {currentBowler.overs}.{currentBowler.balls} - {currentBowler.runs}/{currentBowler.wickets}
               </p>
             )}
@@ -279,15 +277,15 @@ export default function ScorePage() {
           {/* Recent Balls */}
           {recentBalls.length > 0 && (
             <div className="mb-4">
-              <p className="text-xs font-semibold mb-2" style={{ color: '#A1BDCB' }}>THIS OVER</p>
+              <p className="text-xs font-semibold mb-2" style={{ color: '#8aacbf' }}>THIS OVER</p>
               <div className="flex gap-2">
                 {recentBalls.map((ball, i) => (
                   <div key={i} className="w-10 h-10 rounded-lg flex items-center justify-center font-bold text-sm"
                     style={
                       ball.isWicket ? { background: 'rgba(239, 68, 68, 0.2)', color: '#EF4444', border: '1px solid rgba(239, 68, 68, 0.3)' }
-                      : ball.runs === 4 ? { background: 'rgba(161, 189, 203, 0.2)', color: '#A1BDCB', border: '1px solid rgba(161, 189, 203, 0.3)' }
+                      : ball.runs === 4 ? { background: 'rgba(161, 189, 203, 0.2)', color: '#8aacbf', border: '1px solid rgba(161, 189, 203, 0.3)' }
                       : ball.runs === 6 ? { background: 'rgba(243, 197, 112, 0.2)', color: '#F3C570', border: '1px solid rgba(243, 197, 112, 0.3)' }
-                      : { background: '#000D27', color: '#ffffff', border: '1px solid #1a2a4a' }
+                      : { background: '#0a1628', color: '#ffffff', border: '1px solid rgba(255,255,255,0.1)' }
                     }>
                     {ball.isWicket ? 'W' : ball.extras ? ball.extras.toUpperCase() : ball.runs}
                   </div>
@@ -301,15 +299,15 @@ export default function ScorePage() {
 
         {/* Scoring Buttons */}
         <div className="rounded-xl p-6 space-y-5 animate-slide-up animate-delay-300"
-          style={{ background: '#0A1628', border: '1px solid #1a2a4a' }}>
+          style={{ background: '#112240', border: '1px solid rgba(255,255,255,0.1)' }}>
           
           <div>
-            <p className="text-xs font-semibold mb-3" style={{ color: '#A1BDCB' }}>RUNS</p>
+            <p className="text-xs font-semibold mb-3" style={{ color: '#8aacbf' }}>RUNS</p>
             <div className="grid grid-cols-4 gap-3">
               {[0, 1, 2, 3].map((r) => (
                 <button key={r} onClick={() => handleBall(r)}
                   className="h-14 rounded-lg font-bold text-lg transition-all duration-300 hover:scale-105"
-                  style={{ background: '#000D27', color: '#ffffff', border: '1px solid #1a2a4a' }}>
+                  style={{ background: '#0a1628', color: '#ffffff', border: '1px solid rgba(255,255,255,0.1)' }}>
                   {r}
                 </button>
               ))}
@@ -319,7 +317,7 @@ export default function ScorePage() {
           <div className="grid grid-cols-2 gap-3">
             <button onClick={() => handleBall(4)}
               className="h-14 rounded-lg font-bold text-lg transition-all duration-300 hover:scale-105"
-              style={{ background: 'rgba(161, 189, 203, 0.2)', color: '#A1BDCB', border: '1px solid rgba(161, 189, 203, 0.3)' }}>
+              style={{ background: 'rgba(161, 189, 203, 0.2)', color: '#8aacbf', border: '1px solid rgba(161, 189, 203, 0.3)' }}>
               4 (FOUR)
             </button>
             <button onClick={() => handleBall(6)}
@@ -330,16 +328,16 @@ export default function ScorePage() {
           </div>
 
           <div>
-            <p className="text-xs font-semibold mb-3" style={{ color: '#A1BDCB' }}>EXTRAS & WICKET</p>
+            <p className="text-xs font-semibold mb-3" style={{ color: '#8aacbf' }}>EXTRAS & WICKET</p>
             <div className="grid grid-cols-3 gap-3">
               <button onClick={() => handleBall(1, false, 'wd')}
                 className="h-12 rounded-lg font-bold text-sm transition-all duration-300 hover:scale-105"
-                style={{ background: '#000D27', color: '#ffffff', border: '1px solid #1a2a4a' }}>
+                style={{ background: '#0a1628', color: '#ffffff', border: '1px solid rgba(255,255,255,0.1)' }}>
                 WD
               </button>
               <button onClick={() => handleBall(1, false, 'nb')}
                 className="h-12 rounded-lg font-bold text-sm transition-all duration-300 hover:scale-105"
-                style={{ background: '#000D27', color: '#ffffff', border: '1px solid #1a2a4a' }}>
+                style={{ background: '#0a1628', color: '#ffffff', border: '1px solid rgba(255,255,255,0.1)' }}>
                 NB
               </button>
               <button onClick={() => handleBall(0, true)}
@@ -351,6 +349,6 @@ export default function ScorePage() {
           </div>
         </div>
       </div>
-    </div>
+    </AdminLayout>
   );
 }

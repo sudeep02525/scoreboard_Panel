@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useAuth } from '@/context/AuthContext';
 import { api } from '@/lib/api';
 
@@ -19,11 +20,7 @@ export default function LoginPage() {
     setError('');
     const res = await api.post('/auth/login', form);
     if (res.token) {
-      if (res.user.role === 'admin') {
-        setError('Use the admin login page instead.');
-        setLoading(false);
-        return;
-      }
+      if (res.user.role === 'admin') { setError('Use the admin login page instead.'); setLoading(false); return; }
       login(res.user, res.token);
       router.push('/dashboard');
     } else {
@@ -33,73 +30,63 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4" style={{ background: 'linear-gradient(135deg, #00061C 0%, #000D27 50%, #001333 100%)' }}>
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8 animate-fade-in">
-          <img src="/logo.jpeg" alt="Logo" className="w-20 h-20 rounded-full mx-auto mb-4 border-2" style={{ borderColor: '#F3C570' }} />
-          <h1 className="text-3xl font-bold" style={{ color: '#F3C570' }}>Cricket Tournament</h1>
-          <p className="text-sm mt-1" style={{ color: '#A1BDCB' }}>Login to watch live scores</p>
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px', background: 'var(--bg-primary)', position: 'relative' }}>
+      {/* Subtle glow */}
+      <div style={{ position: 'absolute', top: '30%', left: '50%', transform: 'translateX(-50%)', width: '600px', height: '400px', borderRadius: '50%', background: 'radial-gradient(ellipse, rgba(201, 162, 39, 0.025), transparent 70%)', pointerEvents: 'none' }} />
+
+      <div style={{ width: '100%', maxWidth: '400px', position: 'relative', zIndex: 1 }}>
+        {/* Logo */}
+        <div className="animate-fade-in" style={{ textAlign: 'center', marginBottom: '40px' }}>
+          <Image src="/logo.jpeg" alt="Logo" width={72} height={72}
+            style={{ borderRadius: '50%', border: '3px solid var(--gold)', margin: '0 auto 20px', display: 'block', boxShadow: '0 0 40px rgba(201, 162, 39, 0.15)' }} />
+          <h1 className="glow-text" style={{ fontSize: '24px', fontWeight: 800, color: 'var(--gold)', marginBottom: '8px' }}>APL Scoreboard</h1>
+          <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>Login to watch live scores</p>
         </div>
 
-        <div className="rounded-2xl p-6 animate-slide-up animate-delay-100" style={{ background: '#0A1628', border: '1px solid #1a2a4a' }}>
-          <h2 className="text-lg font-bold mb-5" style={{ color: '#ffffff' }}>Login</h2>
+        {/* Form */}
+        <div className="card animate-slide-up animate-delay-100" style={{ padding: '32px' }}>
+          <h2 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '28px' }}>Welcome back</h2>
 
           {error && (
-            <p className="text-sm p-3 rounded-lg mb-4" style={{ background: '#1a0a0a', color: '#EF4444', border: '1px solid #3a1a1a' }}>
-              {error}
-            </p>
+            <div style={{ padding: '12px 16px', borderRadius: '10px', marginBottom: '20px', background: 'rgba(239, 68, 68, 0.06)', border: '1px solid rgba(239, 68, 68, 0.15)', color: 'var(--red)', fontSize: '13px' }}>{error}</div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-xs font-medium mb-1.5" style={{ color: '#A1BDCB' }}>Email</label>
-              <input type="email" required value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
-                className="w-full rounded-lg px-3 py-2.5 focus:outline-none text-sm"
-                style={{ background: '#000D27', border: '1px solid #1a2a4a', color: '#ffffff' }}
-                placeholder="you@example.com" />
+          <form onSubmit={handleSubmit}>
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, marginBottom: '8px', color: 'var(--text-secondary)' }}>Email</label>
+              <input type="email" required value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })}
+                className="input-field" placeholder="you@example.com" />
             </div>
-            <div>
-              <label className="block text-xs font-medium mb-1.5" style={{ color: '#A1BDCB' }}>Password</label>
-              <div className="relative">
-                <input type={showPassword ? "text" : "password"} required value={form.password}
+            <div style={{ marginBottom: '28px' }}>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, marginBottom: '8px', color: 'var(--text-secondary)' }}>Password</label>
+              <div style={{ position: 'relative' }}>
+                <input type={showPassword ? 'text' : 'password'} required value={form.password}
                   onChange={(e) => setForm({ ...form, password: e.target.value })}
-                  className="w-full rounded-lg px-3 py-2.5 focus:outline-none text-sm pr-10"
-                  style={{ background: '#000D27', border: '1px solid #1a2a4a', color: '#ffffff' }}
-                  placeholder="••••••••" />
+                  className="input-field" style={{ paddingRight: '44px' }} placeholder="••••••••" />
                 <button type="button" onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 hover:opacity-70 transition"
-                  style={{ color: '#A1BDCB' }}>
-                  {showPassword ? (
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                      <circle cx="12" cy="12" r="3"/>
-                    </svg>
-                  ) : (
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
-                      <line x1="1" y1="1" x2="23" y2="23"/>
-                    </svg>
-                  )}
+                  style={{ position: 'absolute', right: '14px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: 0, display: 'flex' }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                    {showPassword
+                      ? <><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></>
+                      : <><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></>
+                    }
+                  </svg>
                 </button>
               </div>
             </div>
-            <button type="submit" disabled={loading}
-              className="w-full py-2.5 rounded-lg font-bold transition disabled:opacity-50 text-sm mt-2"
-              style={{ background: '#F3C570', color: '#00061C' }}>
-              {loading ? 'Logging in...' : 'Login'}
+            <button type="submit" disabled={loading} className="btn-gold"
+              style={{ width: '100%', padding: '14px', fontSize: '14px', opacity: loading ? 0.6 : 1, letterSpacing: '0.02em' }}>
+              {loading ? 'Logging in...' : 'Login →'}
             </button>
           </form>
 
-          <p className="text-center text-sm mt-5" style={{ color: '#A1BDCB' }}>
-            Don't have an account?{' '}
-            <Link href="/register" className="font-bold" style={{ color: '#F3C570' }}>Sign Up</Link>
+          <p style={{ textAlign: 'center', fontSize: '13px', marginTop: '24px', color: 'var(--text-muted)' }}>
+            Don't have an account? <Link href="/register" style={{ color: 'var(--gold)', fontWeight: 700, textDecoration: 'none' }}>Sign Up</Link>
           </p>
         </div>
 
-        <p className="text-center text-xs mt-6" style={{ color: '#1a2a4a' }}>
-          Admin?{' '}
-          <Link href="/admin/login" style={{ color: '#1a2a4a' }} className="hover:underline">Login here</Link>
+        <p style={{ textAlign: 'center', fontSize: '11px', marginTop: '28px', color: 'var(--text-dim)' }}>
+          Admin? <Link href="/admin/login" style={{ color: 'var(--text-dim)', textDecoration: 'underline' }}>Login here</Link>
         </p>
       </div>
     </div>
