@@ -11,7 +11,7 @@ export default function LandingPage() {
 
   useEffect(() => {
     if (loading) return;
-    if (user) router.replace(user.role === 'admin' ? '/admin' : '/dashboard');
+    if (user && user.role === 'admin') router.replace('/admin');
   }, [user, loading, router]);
 
   if (loading) return (
@@ -34,7 +34,7 @@ export default function LandingPage() {
         borderBottom: '1px solid var(--border-subtle)',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-          <Image src="/logo.jpeg" alt="Logo" width={40} height={40}
+          <Image src="/logo.png" alt="Logo" width={40} height={40} unoptimized
             style={{ borderRadius: '12px', border: '2px solid var(--gold)' }} />
           <div>
             <p style={{ fontWeight: 800, fontSize: '14px', color: 'var(--gold)', letterSpacing: '0.06em' }}>APL SCOREBOARD</p>
@@ -42,8 +42,7 @@ export default function LandingPage() {
           </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <Link href="/login" className="btn-outline" style={{ padding: '9px 24px', fontSize: '13px', textDecoration: 'none' }}>Login</Link>
-          <Link href="/register" className="btn-gold" style={{ padding: '9px 24px', fontSize: '13px', textDecoration: 'none', display: 'inline-block' }}>Sign Up</Link>
+          <Link href="/dashboard" className="btn-gold" style={{ padding: '9px 24px', fontSize: '13px', textDecoration: 'none', display: 'inline-block' }}>View Scores</Link>
         </div>
       </nav>
 
@@ -77,12 +76,12 @@ export default function LandingPage() {
 
         {/* CTAs */}
         <div className="animate-slide-up animate-delay-300" style={{ display: 'flex', justifyContent: 'center', gap: '14px', marginBottom: '64px' }}>
-          <Link href="/register" className="btn-gold" style={{ padding: '14px 36px', fontSize: '14px', textDecoration: 'none', display: 'inline-block', letterSpacing: '0.02em' }}>
-            Sign Up to Watch →
+          <Link href="/dashboard" className="btn-gold" style={{ padding: '14px 36px', fontSize: '14px', textDecoration: 'none', display: 'inline-block', letterSpacing: '0.02em' }}>
+            View Live Scores →
           </Link>
-          <Link href="/login" className="btn-outline" style={{ padding: '14px 36px', fontSize: '14px', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '10px' }}>
+          <Link href="/dashboard" className="btn-outline" style={{ padding: '14px 36px', fontSize: '14px', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '10px' }}>
             <span className="pulse-dot" style={{ width: '6px', height: '6px' }} />
-            View Live Scores
+            Watch Tournament
           </Link>
         </div>
 

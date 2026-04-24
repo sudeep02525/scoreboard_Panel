@@ -49,7 +49,7 @@ function SidebarInner() {
     <aside className="sidebar">
       {/* Logo */}
       <div className="sidebar-logo-area">
-        <Image src="/logo.jpeg" alt="Logo" width={46} height={46} className="sidebar-logo-img" />
+        <Image src="/logo.png" alt="Logo" width={46} height={46} className="sidebar-logo-img" unoptimized />
         <div>
           <p className="sidebar-brand-name">APL SCOREBOARD</p>
           <p className="sidebar-brand-sub">Live Tournament</p>
@@ -88,9 +88,11 @@ function SidebarInner() {
             </button>
           </>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', padding: '0 4px' }}>
-            <Link href="/login" className="sidebar-link" style={{ justifyContent: 'center' }}>Login</Link>
-            <Link href="/register" className="btn-gold" style={{ display: 'block', padding: '11px 16px', textAlign: 'center', textDecoration: 'none', fontSize: '14px' }}>Sign Up</Link>
+          <div className="sidebar-user-card" style={{ justifyContent: 'center' }}>
+            <div style={{ textAlign: 'center' }}>
+              <p style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>APL Tournament</p>
+              <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '1px' }}>Public Access</p>
+            </div>
           </div>
         )}
       </div>

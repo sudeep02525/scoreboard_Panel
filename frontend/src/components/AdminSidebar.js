@@ -32,7 +32,7 @@ export default function AdminSidebar() {
   return (
     <aside className="sidebar">
       <div className="sidebar-logo-area">
-        <Image src="/logo.jpeg" alt="Logo" width={46} height={46} className="sidebar-logo-img" />
+        <Image src="/logo.png" alt="Logo" width={46} height={46} className="sidebar-logo-img" unoptimized />
         <div>
           <p className="sidebar-brand-name">APL SCOREBOARD</p>
           <p className="sidebar-brand-sub">Admin Panel</p>

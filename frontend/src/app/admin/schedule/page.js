@@ -28,6 +28,10 @@ export default function AdminSchedule() {
   const loadTeams = () => api.get('/teams').then((d) => { if (Array.isArray(d)) setTeams(d); });
 
   const generate = async (type) => {
+    if (!date) {
+      setMsg('Please select a start date first');
+      return;
+    }
     setGenerating(true);
     setMsg('');
     const res = await api.post('/matches/generate-schedule', { overs, date });
@@ -40,6 +44,10 @@ export default function AdminSchedule() {
     setMsg('');
     if (!semiForm.teamA1 || !semiForm.teamB1 || !semiForm.teamA2 || !semiForm.teamB2) {
       setMsg('Please select all teams for both semi finals');
+      return;
+    }
+    if (!semiForm.date) {
+      setMsg('Please select a date for semi finals');
       return;
     }
     setGenerating(true);
@@ -84,6 +92,10 @@ export default function AdminSchedule() {
       setMsg('Please select both teams for final');
       return;
     }
+    if (!finalForm.date) {
+      setMsg('Please select a date for final');
+      return;
+    }
     setGenerating(true);
     
     const final = await api.post('/matches', {
@@ -125,8 +137,8 @@ export default function AdminSchedule() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1" style={{ color: '#8aacbf' }}>Start Date</label>
-              <input type="date" value={date}
+              <label className="block text-sm font-medium mb-1" style={{ color: '#8aacbf' }}>Start Date *</label>
+              <input type="date" value={date} required
                 onChange={(e) => setDate(e.target.value)}
                 className="w-full rounded-lg px-3 py-2 focus:outline-none text-sm"
                 style={{ background: '#0a1628', border: '1px solid rgba(255,255,255,0.1)', color: '#ffffff' }}
@@ -186,8 +198,8 @@ export default function AdminSchedule() {
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="block text-xs mb-1" style={{ color: '#8aacbf' }}>Date</label>
-                    <input type="date" value={semiForm.date} onChange={(e) => setSemiForm({ ...semiForm, date: e.target.value })}
+                    <label className="block text-xs mb-1" style={{ color: '#8aacbf' }}>Date *</label>
+                    <input type="date" value={semiForm.date} required onChange={(e) => setSemiForm({ ...semiForm, date: e.target.value })}
                       className="w-full rounded-lg px-2 py-2 focus:outline-none text-xs"
                       style={{ background: '#112240', border: '1px solid rgba(255,255,255,0.1)', color: '#ffffff' }} />
                   </div>
@@ -227,8 +239,8 @@ export default function AdminSchedule() {
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="block text-xs mb-1" style={{ color: '#8aacbf' }}>Date</label>
-                    <input type="date" value={finalForm.date} onChange={(e) => setFinalForm({ ...finalForm, date: e.target.value })}
+                    <label className="block text-xs mb-1" style={{ color: '#8aacbf' }}>Date *</label>
+                    <input type="date" value={finalForm.date} required onChange={(e) => setFinalForm({ ...finalForm, date: e.target.value })}
                       className="w-full rounded-lg px-2 py-2 focus:outline-none text-xs"
                       style={{ background: '#112240', border: '1px solid rgba(255,255,255,0.1)', color: '#ffffff' }} />
                   </div>

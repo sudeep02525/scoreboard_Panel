@@ -273,6 +273,18 @@ router.post('/:id/ball', protect, adminOnly, async (req, res) => {
         if (innings.currentBowler.balls === 6) {
           innings.currentBowler.overs += 1;
           innings.currentBowler.balls = 0;
+          
+          // Over complete - bowler must be changed
+          // Save current bowler stats to bowling array
+          const existingBowlerIndex = innings.bowling.findIndex(b => b.player.toString() === innings.currentBowler.player.toString());
+          if (existingBowlerIndex >= 0) {
+            innings.bowling[existingBowlerIndex] = innings.currentBowler;
+          } else {
+            innings.bowling.push({ ...innings.currentBowler });
+          }
+          
+          // Clear current bowler to force selection of new bowler
+          innings.currentBowler = { player: null, overs: 0, balls: 0, runs: 0, wickets: 0 };
         }
       }
       innings.currentBowler.runs += runs || 0;

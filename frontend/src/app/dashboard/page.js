@@ -59,7 +59,7 @@ function DashboardContent() {
           display: 'flex', alignItems: 'center', gap: '20px',
         }}>
           <div style={{ position: 'relative', flexShrink: 0 }}>
-            <Image src="/logo.jpeg" alt="Logo" width={52} height={52}
+            <Image src="/logo.png" alt="Logo" width={52} height={52} unoptimized
               style={{ borderRadius: '50%', border: '2px solid var(--gold)' }} />
             {liveMatches.length > 0 && (
               <div style={{

@@ -5,15 +5,11 @@ export function middleware(request) {
   const token = request.cookies.get('token')?.value;
   const role = request.cookies.get('role')?.value;
 
-  // Allow landing page, register, login without auth
-  if (pathname === '/' || pathname === '/register' || pathname === '/login') {
-    // If already logged in, redirect to dashboard
-    if (token) {
-      if (role === 'admin') {
-        return NextResponse.redirect(new URL('/admin', request.url));
-      } else {
-        return NextResponse.redirect(new URL('/dashboard', request.url));
-      }
+  // Allow landing page without auth
+  if (pathname === '/') {
+    // If admin logged in, redirect to admin panel
+    if (token && role === 'admin') {
+      return NextResponse.redirect(new URL('/admin', request.url));
     }
     return NextResponse.next();
   }
@@ -34,11 +30,8 @@ export function middleware(request) {
     return NextResponse.next();
   }
 
-  // User dashboard — must be logged in as user
-  if (pathname.startsWith('/dashboard')) {
-    if (!token) {
-      return NextResponse.redirect(new URL('/register', request.url));
-    }
+  // Dashboard and matches are now public - no authentication required
+  if (pathname.startsWith('/dashboard') || pathname.startsWith('/matches') || pathname.startsWith('/standings')) {
     return NextResponse.next();
   }
 
@@ -46,5 +39,5 @@ export function middleware(request) {
 }
 
 export const config = {
-  matcher: ['/', '/admin/:path*', '/dashboard/:path*', '/register', '/login'],
+  matcher: ['/', '/admin/:path*', '/dashboard/:path*', '/matches/:path*', '/standings/:path*'],
 };

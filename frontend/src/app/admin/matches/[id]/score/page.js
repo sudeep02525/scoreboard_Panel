@@ -114,6 +114,15 @@ export default function ScorePage() {
     if (res._id) {
       setMatch(res);
       
+      // Check if over is complete after this ball
+      const updatedInnings = inningsNum === 1 ? res.innings1 : res.innings2;
+      if (updatedInnings?.currentBowler?.player === null) {
+        setBowlerId('');
+        setMsg('Over complete! Select new bowler');
+        setTimeout(() => setMsg(''), 4000);
+        return;
+      }
+      
       // If wicket, clear striker and show message
       if (isWicket) {
         setStrikerId('');
