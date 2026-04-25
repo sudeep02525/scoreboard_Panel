@@ -2,7 +2,6 @@
 import { Suspense, useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
-import { useAuth } from '@/context/AuthContext';
 import MatchCard from '@/components/MatchCard';
 import StandingsTable from '@/components/StandingsTable';
 import { api } from '@/lib/api';
@@ -22,7 +21,6 @@ export default function Dashboard() {
 
 function DashboardContent() {
   const searchParams = useSearchParams();
-  const { user } = useAuth();
   const [liveMatches, setLiveMatches] = useState([]);
   const [allMatches, setAllMatches] = useState([]);
   const [standings, setStandings] = useState({ groupA: [], groupB: [] });
@@ -51,16 +49,15 @@ function DashboardContent() {
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg-primary)' }}>
-      <div style={{ maxWidth: '960px', margin: '0 auto', padding: '32px' }}>
+      <div className="p-4 md:p-8" style={{ maxWidth: '960px', margin: '0 auto' }}>
 
         {/* Welcome card */}
-        <div className="card animate-fade-in" style={{
-          padding: '28px 32px', marginBottom: '32px',
-          display: 'flex', alignItems: 'center', gap: '20px',
+        <div className="card animate-fade-in flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-5" style={{
+          padding: '24px', marginBottom: '32px',
         }}>
           <div style={{ position: 'relative', flexShrink: 0 }}>
-            <Image src="/logo.png" alt="Logo" width={52} height={52} unoptimized
-              style={{ borderRadius: '50%', border: '2px solid var(--gold)' }} />
+            <Image src="/logo.png" alt="Logo" width={80} height={80} unoptimized
+              style={{ objectFit: 'contain', filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.4))' }} />
             {liveMatches.length > 0 && (
               <div style={{
                 position: 'absolute', bottom: '-2px', right: '-2px',
@@ -73,7 +70,7 @@ function DashboardContent() {
           </div>
           <div style={{ flex: 1 }}>
             <h1 style={{ fontSize: '20px', fontWeight: 800, color: 'var(--gold)', marginBottom: '4px' }}>
-              Welcome back, {user?.name}!
+              APL Scoreboard
             </h1>
             <p style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
               {liveMatches.length > 0 ? `${liveMatches.length} match${liveMatches.length > 1 ? 'es' : ''} live right now!` : 'No live matches right now. Check upcoming fixtures.'}
@@ -119,7 +116,7 @@ function DashboardContent() {
                 emptySub="Completed matches will appear here" />
             )}
             {activeTab === 'standings' && (
-              <div className="animate-fade-in" style={{ display: 'grid', gap: '20px', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))' }}>
+              <div className="animate-fade-in" style={{ display: 'grid', gap: '20px', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))' }}>
                 <StandingsTable teams={standings.groupA} groupName="A" />
                 <StandingsTable teams={standings.groupB} groupName="B" />
               </div>
@@ -145,7 +142,7 @@ function Section({ matches, emptyIcon, emptyText, emptySub }) {
     );
   }
   return (
-    <div className="animate-fade-in" style={{ display: 'grid', gap: '16px', gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))' }}>
+    <div className="animate-fade-in" style={{ display: 'grid', gap: '16px', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))' }}>
       {matches.map((m) => <MatchCard key={m._id} match={m} />)}
     </div>
   );

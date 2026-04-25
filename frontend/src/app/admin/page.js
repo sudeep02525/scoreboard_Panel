@@ -45,12 +45,12 @@ export default function AdminDashboard() {
 
   return (
     <AdminLayout>
-      <div style={{ padding: '32px' }}>
+      <div className="p-4 sm:p-6 md:p-8">
         <h1 style={{ color: 'var(--text-primary)', fontSize: '26px', fontWeight: 800, marginBottom: '6px', letterSpacing: '-0.02em' }}>Dashboard</h1>
         <p style={{ color: 'var(--text-muted)', fontSize: '14px', marginBottom: '32px' }}>Live tournament overview & quick actions</p>
 
         {/* Stats */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '32px' }}>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8">
           {statCards.map((s) => (
             <div key={s.label} className="stat-card">
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
@@ -65,12 +65,12 @@ export default function AdminDashboard() {
 
         {/* Actions */}
         <p style={{ color: 'var(--text-muted)', fontSize: '10px', fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', marginBottom: '14px' }}>Quick Actions</p>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '14px' }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           {actions.map((a) => (
             <Link key={a.href} href={a.href} style={{ textDecoration: 'none' }}>
               <div className="card" style={{ padding: '22px', display: 'flex', alignItems: 'center', gap: '16px', cursor: 'pointer' }}>
                 <div style={{ width: '42px', height: '42px', borderRadius: '10px', background: 'rgba(201, 162, 39, 0.06)', border: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>{a.icon}</div>
-                <div>
+                <div style={{ minWidth: 0 }}>
                   <p style={{ color: 'var(--gold)', fontSize: '14px', fontWeight: 700, marginBottom: '3px' }}>{a.label} →</p>
                   <p style={{ color: 'var(--text-muted)', fontSize: '12px' }}>{a.sub}</p>
                 </div>

@@ -37,8 +37,14 @@ export default function LoginPage() {
       <div style={{ width: '100%', maxWidth: '400px', position: 'relative', zIndex: 1 }}>
         {/* Logo */}
         <div className="animate-fade-in" style={{ textAlign: 'center', marginBottom: '40px' }}>
-          <Image src="/logo.png" alt="Logo" width={72} height={72} unoptimized
-            style={{ borderRadius: '50%', margin: '0 auto 20px', display: 'block' }} />
+          <Link href="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: 'var(--text-muted)', textDecoration: 'none', marginBottom: '24px', transition: 'color 0.2s' }}
+            onMouseEnter={e => e.currentTarget.style.color = 'var(--gold)'}
+            onMouseLeave={e => e.currentTarget.style.color = 'var(--text-muted)'}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            Back to Home
+          </Link>
+          <Image src="/logo.png" alt="Logo" width={80} height={80} unoptimized
+            style={{ objectFit: 'contain', margin: '0 auto 20px', display: 'block', filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.4))' }} />
           <h1 className="glow-text" style={{ fontSize: '24px', fontWeight: 800, color: 'var(--gold)', marginBottom: '8px' }}>APL Scoreboard</h1>
           <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>Login to watch live scores</p>
         </div>

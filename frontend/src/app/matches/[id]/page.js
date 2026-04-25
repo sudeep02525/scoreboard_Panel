@@ -90,10 +90,10 @@ export default function MatchDetailPage() {
     <UserLayout>
       <div className="max-w-3xl mx-auto px-4 py-8">
         {/* Match Header */}
-        <div className="rounded-2xl p-6 mb-6 text-center"
+        <div className="rounded-2xl p-4 sm:p-6 mb-6 text-center"
           style={{ background: 'linear-gradient(135deg, #000D27, #0A1628)', border: '1px solid #1a2a4a' }}>
           <p className="text-xs mb-3" style={{ color: '#A1BDCB' }}>{match.group} • {match.ground}</p>
-          <div className="flex items-center justify-center gap-6">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
             <div>
               <p className="text-lg font-bold" style={{ color: '#ffffff' }}>{match.teamA?.name}</p>
               {match.innings1 && <p className="text-3xl font-bold mt-1" style={{ color: '#F3C570' }}>{match.innings1.runs}/{match.innings1.wickets}</p>}

@@ -21,7 +21,6 @@ export default function LandingPage() {
     </div>
   );
 
-  if (user) return null;
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg-primary)', position: 'relative', overflow: 'hidden' }}>
@@ -29,28 +28,26 @@ export default function LandingPage() {
       {/* Navbar */}
       <nav style={{
         position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50,
-        padding: '16px 40px', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         background: 'rgba(6, 14, 26, 0.92)', backdropFilter: 'blur(16px)',
         borderBottom: '1px solid var(--border-subtle)',
-      }}>
+      }} className="px-4 py-3 sm:px-10 sm:py-4">
         <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-          <Image src="/logo.png" alt="Logo" width={40} height={40} unoptimized
-            style={{ borderRadius: '12px', border: '2px solid var(--gold)' }} />
+          <Image src="/logo.png" alt="Logo" width={48} height={48} unoptimized
+            style={{ objectFit: 'contain', filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.4))' }} />
           <div>
             <p style={{ fontWeight: 800, fontSize: '14px', color: 'var(--gold)', letterSpacing: '0.06em' }}>APL SCOREBOARD</p>
             <p style={{ fontSize: '10px', fontWeight: 600, color: 'var(--text-muted)', letterSpacing: '0.08em' }}>SEASON 8 • 2026</p>
           </div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <Link href="/dashboard" className="btn-gold" style={{ padding: '9px 24px', fontSize: '13px', textDecoration: 'none', display: 'inline-block' }}>View Scores</Link>
-        </div>
+        <Link href="/dashboard" className="btn-gold" style={{ padding: '9px 24px', fontSize: '13px', textDecoration: 'none', display: 'inline-block' }}>View Scores</Link>
       </nav>
 
       {/* Subtle bg glow */}
       <div style={{ position: 'absolute', top: '20%', left: '50%', transform: 'translateX(-50%)', width: '800px', height: '500px', borderRadius: '50%', background: 'radial-gradient(ellipse, rgba(201, 162, 39, 0.03), transparent 70%)', pointerEvents: 'none' }} />
 
       {/* Hero */}
-      <div style={{ position: 'relative', zIndex: 1, maxWidth: '800px', margin: '0 auto', padding: '160px 24px 80px', textAlign: 'center' }}>
+      <div className="relative z-10 max-w-[800px] mx-auto px-6 pt-32 pb-16 md:pt-40 md:pb-20 text-center">
 
         {/* Badge */}
         <div className="animate-fade-in" style={{
@@ -64,7 +61,7 @@ export default function LandingPage() {
         </div>
 
         {/* Headline */}
-        <h1 className="animate-slide-up animate-delay-100" style={{ fontSize: '64px', fontWeight: 900, lineHeight: 1.05, letterSpacing: '-0.03em', marginBottom: '24px' }}>
+        <h1 className="animate-slide-up animate-delay-100 text-4xl sm:text-5xl md:text-[64px] font-black leading-[1.1] tracking-[-0.03em] mb-6">
           <span style={{ color: 'var(--text-primary)' }}>Experience the</span><br />
           <span className="glow-text" style={{ color: 'var(--gold)' }}>Ultimate Cricket</span><br />
           <span style={{ color: 'var(--text-primary)' }}>Tournament</span>
@@ -75,18 +72,18 @@ export default function LandingPage() {
         </p>
 
         {/* CTAs */}
-        <div className="animate-slide-up animate-delay-300" style={{ display: 'flex', justifyContent: 'center', gap: '14px', marginBottom: '64px' }}>
+        <div className="animate-slide-up animate-delay-300 flex flex-col sm:flex-row justify-center gap-4 mb-16">
           <Link href="/dashboard" className="btn-gold" style={{ padding: '14px 36px', fontSize: '14px', textDecoration: 'none', display: 'inline-block', letterSpacing: '0.02em' }}>
             View Live Scores →
           </Link>
-          <Link href="/dashboard" className="btn-outline" style={{ padding: '14px 36px', fontSize: '14px', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '10px' }}>
+          <Link href="/dashboard" className="btn-outline" style={{ padding: '14px 36px', fontSize: '14px', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
             <span className="pulse-dot" style={{ width: '6px', height: '6px' }} />
             Watch Tournament
           </Link>
         </div>
 
         {/* Stats row */}
-        <div className="animate-fade-in animate-delay-400" style={{ display: 'flex', justifyContent: 'center', gap: '48px', flexWrap: 'wrap' }}>
+        <div className="animate-fade-in animate-delay-400 flex justify-center flex-wrap gap-8 sm:gap-12">
           {[
             { v: '8', l: 'Teams' }, { v: '56', l: 'Players' }, { v: '2', l: 'Grounds' }, { v: '∞', l: 'Live Updates' },
           ].map((s, i) => (
@@ -98,7 +95,7 @@ export default function LandingPage() {
         </div>
 
         {/* Features */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', marginTop: '120px' }}>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-24 md:mt-32">
           {[
             { icon: <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" strokeWidth="1.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>, title: 'Live Match Scores', desc: 'Ball-by-ball real-time updates with instant score refresh' },
             { icon: <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" strokeWidth="1.5"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>, title: 'Team Standings', desc: 'Complete rankings, win/loss records & net run rates' },

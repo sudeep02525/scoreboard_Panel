@@ -5,16 +5,15 @@ export function middleware(request) {
   const token = request.cookies.get('token')?.value;
   const role = request.cookies.get('role')?.value;
 
-  // Allow landing page without auth
+  // Landing page — redirect admins to admin panel
   if (pathname === '/') {
-    // If admin logged in, redirect to admin panel
     if (token && role === 'admin') {
       return NextResponse.redirect(new URL('/admin', request.url));
     }
     return NextResponse.next();
   }
 
-  // Allow admin login page always
+  // Admin login page
   if (pathname === '/admin/login') {
     if (token && role === 'admin') {
       return NextResponse.redirect(new URL('/admin', request.url));
@@ -30,11 +29,7 @@ export function middleware(request) {
     return NextResponse.next();
   }
 
-  // Dashboard and matches are now public - no authentication required
-  if (pathname.startsWith('/dashboard') || pathname.startsWith('/matches') || pathname.startsWith('/standings')) {
-    return NextResponse.next();
-  }
-
+  // All other routes (dashboard, matches, standings) are fully public
   return NextResponse.next();
 }
 

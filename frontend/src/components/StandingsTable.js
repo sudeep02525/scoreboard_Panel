@@ -15,7 +15,8 @@ export default function StandingsTable({ teams, groupName }) {
         <span style={{ fontWeight: 700, fontSize: '14px', color: 'var(--gold)' }}>Group {groupName}</span>
       </div>
 
-      <table style={{ width: '100%', fontSize: '12px', borderCollapse: 'collapse' }}>
+      <div style={{ overflowX: 'auto' }}>
+      <table style={{ width: '100%', fontSize: '12px', borderCollapse: 'collapse', minWidth: '400px' }}>
         <thead>
           <tr style={{ borderBottom: '1px solid var(--border-subtle)' }}>
             {['#', 'Team', 'P', 'W', 'L', 'Pts', 'NRR'].map((h, i) => (
@@ -56,6 +57,7 @@ export default function StandingsTable({ teams, groupName }) {
           )}
         </tbody>
       </table>
+      </div>
 
       {teams && teams.length > 0 && (
         <div style={{

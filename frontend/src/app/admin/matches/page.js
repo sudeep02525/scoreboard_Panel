@@ -134,17 +134,17 @@ export default function AdminMatches() {
   const finalMatches = matches.filter(m => m.stage === 'final');
 
   const MatchCard = ({ m }) => (
-    <div style={{ background: '#112240', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '8px', padding: '14px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
-      <div style={{ flex: 1 }}>
+    <div className="flex flex-col sm:flex-row sm:items-center gap-3" style={{ background: '#112240', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '8px', padding: '14px 16px' }}>
+      <div style={{ flex: 1, minWidth: 0 }}>
         <p style={{ color: '#ffffff', fontSize: '13px', fontWeight: 600 }}>{m.teamA?.name} vs {m.teamB?.name}</p>
         <p style={{ color: '#4a6a82', fontSize: '11px', marginTop: '2px' }}>{m.ground} • Round {m.round || '-'} • {m.overs} overs</p>
       </div>
-      <span style={{ fontSize: '11px', fontWeight: 600, textTransform: 'capitalize', padding: '3px 8px', borderRadius: '4px',
-        color: m.status === 'live' ? '#ef4444' : m.status === 'completed' ? '#4a6a82' : '#8aacbf',
-        background: m.status === 'live' ? 'rgba(239,68,68,0.1)' : m.status === 'completed' ? 'rgba(74,106,130,0.1)' : 'rgba(138,172,191,0.1)' }}>
-        {m.status}
-      </span>
-      <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+      <div className="flex items-center gap-2 flex-wrap">
+        <span style={{ fontSize: '11px', fontWeight: 600, textTransform: 'capitalize', padding: '3px 8px', borderRadius: '4px',
+          color: m.status === 'live' ? '#ef4444' : m.status === 'completed' ? '#4a6a82' : '#8aacbf',
+          background: m.status === 'live' ? 'rgba(239,68,68,0.1)' : m.status === 'completed' ? 'rgba(74,106,130,0.1)' : 'rgba(138,172,191,0.1)' }}>
+          {m.status}
+        </span>
         {m.status === 'scheduled' && (
           <>
             <button onClick={() => setStatus(m._id, 'live')} style={{ padding: '5px 10px', borderRadius: '5px', background: '#ef4444', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: '11px' }}>Start Live</button>
@@ -156,6 +156,9 @@ export default function AdminMatches() {
         )}
         {m.status !== 'completed' && (
           <Link href={`/admin/matches/${m._id}/complete`} style={{ padding: '5px 10px', borderRadius: '5px', background: 'rgba(255,255,255,0.1)', color: '#8aacbf', textDecoration: 'none', fontWeight: 600, fontSize: '11px' }}>Complete</Link>
+        )}
+        {m.status !== 'scheduled' && (
+          <button onClick={() => setStatus(m._id, 'scheduled')} style={{ padding: '5px 10px', borderRadius: '5px', background: 'rgba(255,255,255,0.1)', color: '#8aacbf', border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: '11px' }}>Reset</button>
         )}
         <button onClick={() => handleDelete(m._id)} style={{ padding: '5px 10px', borderRadius: '5px', background: 'rgba(239,68,68,0.1)', color: '#ef4444', border: '1px solid rgba(239,68,68,0.2)', cursor: 'pointer', fontWeight: 600, fontSize: '11px' }}>Delete</button>
       </div>
@@ -189,8 +192,8 @@ export default function AdminMatches() {
         </div>
       )}
 
-      <div style={{ padding: '28px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
+      <div className="p-4 md:p-8">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
           <div>
             <h1 style={{ color: '#ffffff', fontSize: '22px', fontWeight: 700, marginBottom: '4px' }}>Manage Matches</h1>
             <p style={{ color: '#4a6a82', fontSize: '13px' }}>Schedule, score and complete matches</p>
@@ -220,7 +223,7 @@ export default function AdminMatches() {
             </p>
             
             <form onSubmit={handleCreateMatch} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-medium mb-1" style={{ color: '#8aacbf' }}>Team A</label>
                   <select 
@@ -252,7 +255,7 @@ export default function AdminMatches() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-medium mb-1" style={{ color: '#8aacbf' }}>Match Type</label>
                   <select 
@@ -308,7 +311,7 @@ export default function AdminMatches() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                 <div>
                   <label className="block text-xs font-medium mb-1" style={{ color: '#8aacbf' }}>Ground</label>
                   <select 

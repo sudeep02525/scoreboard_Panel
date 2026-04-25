@@ -30,8 +30,8 @@ export default function RegisterPage() {
 
       <div style={{ width: '100%', maxWidth: '400px', position: 'relative', zIndex: 1 }}>
         <div className="animate-fade-in" style={{ textAlign: 'center', marginBottom: '40px' }}>
-          <Image src="/logo.png" alt="Logo" width={72} height={72} unoptimized
-            style={{ borderRadius: '50%', margin: '0 auto 20px', display: 'block' }} />
+          <Image src="/logo.png" alt="Logo" width={80} height={80} unoptimized
+            style={{ objectFit: 'contain', margin: '0 auto 20px', display: 'block', filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.4))' }} />
           <h1 className="glow-text" style={{ fontSize: '24px', fontWeight: 800, color: 'var(--gold)', marginBottom: '8px' }}>APL Scoreboard</h1>
           <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>Create your account to watch live scores</p>
         </div>

@@ -120,14 +120,14 @@ export default function AdminSchedule() {
 
   return (
     <AdminLayout>
-      <div style={{ padding: '28px' }}>
+      <div className="p-4 sm:p-6 md:p-8">
         <h1 style={{ color: '#ffffff', fontSize: '22px', fontWeight: 700, marginBottom: '4px' }}>Generate Schedule</h1>
         <p style={{ color: '#4a6a82', fontSize: '13px', marginBottom: '24px' }}>Create fixtures and knockout rounds</p>
 
         <div style={{ background: '#112240', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '10px', padding: '20px' }}>
           {msg && <p style={{ background: 'rgba(201,162,39,0.1)', color: '#c9a227', border: '1px solid rgba(201,162,39,0.3)', borderRadius: '6px', padding: '8px 12px', fontSize: '13px', marginBottom: '16px' }}>{msg}</p>}
 
-          <div className="grid grid-cols-2 gap-4 max-w-lg">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-lg">
             <div>
               <label className="block text-sm font-medium mb-1" style={{ color: '#8aacbf' }}>Overs per match</label>
               <input type="number" min={1} max={50} value={overs}

@@ -52,7 +52,7 @@ export default function AdminTeams() {
         </div>
       )}
 
-      <div style={{ padding: '32px' }}>
+      <div className="p-4 md:p-8">
         <h1 style={{ color: 'var(--text-primary)', fontSize: '26px', fontWeight: 800, marginBottom: '6px', letterSpacing: '-0.02em' }}>Manage Teams</h1>
         <p style={{ color: 'var(--text-muted)', fontSize: '14px', marginBottom: '32px' }}>Add and manage teams across groups</p>
 
@@ -70,7 +70,7 @@ export default function AdminTeams() {
           </form>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {['A', 'B'].map((g) => {
             const grp = g === 'A' ? groupA : groupB;
             return (

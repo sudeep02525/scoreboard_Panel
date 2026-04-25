@@ -65,8 +65,8 @@ export default function AdminPlayers() {
         </div>
       )}
 
-      <div style={{ padding: '32px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
+      <div className="p-4 md:p-8">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8">
           <div>
             <h1 style={{ color: 'var(--text-primary)', fontSize: '26px', fontWeight: 800, marginBottom: '6px', letterSpacing: '-0.02em' }}>Manage Players</h1>
             <p style={{ color: 'var(--text-muted)', fontSize: '14px' }}>Add and manage players for each team</p>
@@ -87,7 +87,7 @@ export default function AdminPlayers() {
           {msg && (
             <div style={{ padding: '10px 14px', borderRadius: '10px', marginBottom: '16px', background: 'rgba(201, 162, 39, 0.04)', border: '1px solid var(--border-default)', color: 'var(--gold)', fontSize: '13px' }}>{msg}</div>
           )}
-          <form onSubmit={handleAdd} style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
+          <form onSubmit={handleAdd} className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3">
             <input required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })}
               placeholder="Player name" className="input-field" style={{ flex: 1, minWidth: '180px' }} />
             <select required value={form.team} onChange={(e) => setForm({ ...form, team: e.target.value })}

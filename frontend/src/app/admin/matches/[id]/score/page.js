@@ -162,7 +162,7 @@ export default function ScorePage() {
 
   return (
     <AdminLayout>
-      <div className="px-6 py-6">
+      <div className="p-4 sm:p-6">
         {/* Header */}
         <div className="mb-6 animate-fade-in">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold mb-3"
@@ -182,7 +182,7 @@ export default function ScorePage() {
         <div className="flex gap-2 mb-6 animate-slide-up animate-delay-100">
           {[1, 2].map((n) => (
             <button key={n} onClick={() => handleInningsSwitch(n)}
-              className="flex-1 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300"
+              className="flex-1 px-3 py-2 sm:px-4 sm:py-2.5 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-300"
               style={inningsNum === n
                 ? { background: '#c9a227', color: '#0a1628' }
                 : { background: '#112240', color: '#8aacbf', border: '1px solid rgba(255,255,255,0.1)' }}>
@@ -226,7 +226,7 @@ export default function ScorePage() {
           </div>
 
           {/* Current Batsmen */}
-          <div className="grid grid-cols-2 gap-4 mb-4">
+          <div className="relative grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
             <div className="rounded-lg p-3" style={{ background: '#0a1628', border: '1px solid rgba(255,255,255,0.1)' }}>
               <div className="flex items-center justify-between mb-2">
                 <p className="text-xs font-semibold" style={{ color: '#8aacbf' }}>STRIKER</p>
@@ -246,6 +246,26 @@ export default function ScorePage() {
                 </p>
               )}
             </div>
+
+            {/* Swap Button */}
+            <button
+              onClick={() => {
+                const tmp = strikerId;
+                setStrikerId(nonStrikerId);
+                setNonStrikerId(tmp);
+                setTimeout(() => handleSetPlayers(), 50);
+              }}
+              title="Swap striker & non-striker"
+              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 hover:rotate-180 cursor-pointer"
+              style={{ background: '#c9a227', border: '2px solid #0a1628', boxShadow: '0 2px 10px rgba(201,162,39,0.4)' }}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0a1628" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="17 1 21 5 17 9" />
+                <path d="M3 11V9a4 4 0 0 1 4-4h14" />
+                <polyline points="7 23 3 19 7 15" />
+                <path d="M21 13v2a4 4 0 0 1-4 4H3" />
+              </svg>
+            </button>
 
             <div className="rounded-lg p-3" style={{ background: '#0a1628', border: '1px solid rgba(255,255,255,0.1)' }}>
               <p className="text-xs font-semibold mb-2" style={{ color: '#8aacbf' }}>NON-STRIKER</p>
@@ -307,7 +327,7 @@ export default function ScorePage() {
         </div>
 
         {/* Scoring Buttons */}
-        <div className="rounded-xl p-6 space-y-5 animate-slide-up animate-delay-300"
+        <div className="rounded-xl p-4 sm:p-6 space-y-5 animate-slide-up animate-delay-300"
           style={{ background: '#112240', border: '1px solid rgba(255,255,255,0.1)' }}>
           
           <div>

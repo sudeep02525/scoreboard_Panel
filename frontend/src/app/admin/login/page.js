@@ -33,8 +33,8 @@ export default function AdminLoginPage() {
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px', background: 'var(--bg-primary)' }}>
       <div style={{ width: '100%', maxWidth: '400px' }}>
         <div className="animate-fade-in" style={{ textAlign: 'center', marginBottom: '40px' }}>
-          <Image src="/logo.png" alt="Logo" width={64} height={64} unoptimized
-            style={{ borderRadius: '50%', margin: '0 auto 20px', display: 'block' }} />
+          <Image src="/logo.png" alt="Logo" width={80} height={80} unoptimized
+            style={{ objectFit: 'contain', margin: '0 auto 20px', display: 'block', filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.4))' }} />
           <div style={{
             display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '6px 14px',
             borderRadius: '6px', background: 'rgba(201, 162, 39, 0.06)', border: '1px solid var(--border-default)',

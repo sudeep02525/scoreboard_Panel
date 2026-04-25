@@ -39,7 +39,7 @@ export default function CompleteMatchPage() {
 
   return (
     <AdminLayout>
-      <div className="px-6 py-8 max-w-md">
+      <div className="p-4 sm:px-6 sm:py-8 max-w-md">
         {/* Header */}
         <div className="mb-6 animate-fade-in">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold mb-3"
