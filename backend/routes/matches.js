@@ -171,10 +171,11 @@ router.post('/:id/ball', protect, adminOnly, async (req, res) => {
   try {
     const { 
       inningsNum, 
-      runs, 
+      runs,         // runs scored by bat (0-6)
       isWicket, 
       dismissalType,
-      extras, 
+      extras,       // 'wd','nb','nb-ff','nb-2b','nb-wh','b','lb','ot1','ot2','ot3','ot4'
+      extraRuns,    // extra penalty runs (overthrow etc.)
       batsmanId, 
       bowlerId,
       strikerId,
@@ -191,17 +192,9 @@ router.post('/:id/ball', protect, adminOnly, async (req, res) => {
     if (!match[inningsKey]) {
       match[inningsKey] = {
         team: inningsNum === 1 ? match.teamA : match.teamB,
-        runs: 0,
-        wickets: 0,
-        overs: 0,
-        balls: 0,
-        extras: 0,
-        currentBatsmen: [],
-        ballByBall: [],
-        partnerships: [],
-        fallOfWickets: [],
-        batting: [],
-        bowling: [],
+        runs: 0, wickets: 0, overs: 0, balls: 0, extras: 0,
+        currentBatsmen: [], ballByBall: [], partnerships: [],
+        fallOfWickets: [], batting: [], bowling: [],
       };
     }
 
@@ -220,9 +213,57 @@ router.post('/:id/ball', protect, adminOnly, async (req, res) => {
       innings.currentBowler = { player: bowlerId, overs: 0, balls: 0, runs: 0, wickets: 0 };
     }
 
-    // Calculate current over and ball
+    // Determine delivery type
+    // Wide: wd
+    // No Ball variants: nb, nb-ff (front foot), nb-2b (2 bounce), nb-wh (waist high full toss)
+    // Bye: b  |  Leg Bye: lb
+    // Overthrow: ot1, ot2, ot3, ot4
+    const isWide = extras === 'wd';
+    const isNoBall = extras === 'nb' || extras === 'nb-ff' || extras === 'nb-2b' || extras === 'nb-wh';
+    const isBye = extras === 'b';
+    const isLegBye = extras === 'lb';
+    const isOverthrow = extras && extras.startsWith('ot');
+    const overthrowRuns = isOverthrow ? parseInt(extras.replace('ot', '')) || 0 : 0;
+
+    // Legal ball = counts in over (not wide, not no-ball)
+    const isLegal = !isWide && !isNoBall;
+
     const currentOver = innings.overs;
     const currentBall = innings.balls + 1;
+
+    // Total runs to add to innings
+    // Wide/NB: +1 penalty + any runs scored off the bat
+    // Bye/LegBye: runs go to team but NOT to batsman
+    // Overthrow: extra runs added on top
+    let totalRunsToAdd = 0;
+    let batsmanRuns = 0;
+    let extraRunsToAdd = 0;
+
+    if (isWide) {
+      // Wide: +1 penalty, any additional runs (e.g. 4 wides) go as extras
+      extraRunsToAdd = 1 + (runs || 0);
+      totalRunsToAdd = extraRunsToAdd;
+      batsmanRuns = 0;
+    } else if (isNoBall) {
+      // No Ball: +1 penalty, batsman can score off it
+      extraRunsToAdd = 1;
+      batsmanRuns = runs || 0;
+      totalRunsToAdd = 1 + batsmanRuns;
+    } else if (isBye || isLegBye) {
+      // Bye/Leg Bye: runs go to team as extras, not to batsman
+      extraRunsToAdd = runs || 0;
+      batsmanRuns = 0;
+      totalRunsToAdd = extraRunsToAdd;
+    } else if (isOverthrow) {
+      // Overthrow: bat runs + overthrow extras
+      batsmanRuns = runs || 0;
+      extraRunsToAdd = overthrowRuns;
+      totalRunsToAdd = batsmanRuns + overthrowRuns;
+    } else {
+      // Normal delivery
+      batsmanRuns = runs || 0;
+      totalRunsToAdd = batsmanRuns;
+    }
 
     // Add ball to ball-by-ball
     const ballData = {
@@ -230,10 +271,12 @@ router.post('/:id/ball', protect, adminOnly, async (req, res) => {
       ball: currentBall,
       batsman: batsmanId || strikerId,
       bowler: bowlerId,
-      runs: runs || 0,
+      runs: totalRunsToAdd,
       isWicket: isWicket || false,
       dismissalType: dismissalType || '',
       extras: extras || '',
+      extraRuns: extraRunsToAdd,
+      isLegal,
       commentary: commentary || '',
     };
     
@@ -241,9 +284,11 @@ router.post('/:id/ball', protect, adminOnly, async (req, res) => {
     innings.ballByBall.push(ballData);
 
     // Update innings totals
-    const isExtra = extras && (extras === 'wd' || extras === 'nb');
-    
-    if (!isExtra) {
+    innings.runs += totalRunsToAdd;
+    if (extraRunsToAdd > 0) innings.extras += extraRunsToAdd;
+
+    // Count legal balls in over
+    if (isLegal) {
       innings.balls += 1;
       if (innings.balls === 6) {
         innings.overs += 1;
@@ -251,48 +296,66 @@ router.post('/:id/ball', protect, adminOnly, async (req, res) => {
       }
     }
 
-    innings.runs += runs || 0;
-    
-    if (isExtra) {
-      innings.extras += 1;
-    }
-
-    // Update striker stats
+    // Update striker stats (only bat runs, not extras from bye/legbye/wide)
     const striker = innings.currentBatsmen.find(b => b.isStriker);
-    if (striker && !isExtra) {
-      striker.balls += 1;
-      striker.runs += runs || 0;
-      if (runs === 4) striker.fours += 1;
-      if (runs === 6) striker.sixes += 1;
+    if (striker && !isWide && !isBye && !isLegBye) {
+      if (isLegal || isNoBall) {
+        // Ball faced: legal deliveries + no balls (not wides)
+        if (!isNoBall) striker.balls += 1; // no ball doesn't count as ball faced in some formats; here we count it
+        else striker.balls += 1; // count no-ball as ball faced
+        striker.runs += batsmanRuns;
+        if (batsmanRuns === 4) striker.fours += 1;
+        if (batsmanRuns === 6) striker.sixes += 1;
+      }
     }
 
     // Update bowler stats
     if (innings.currentBowler.player) {
-      if (!isExtra) {
+      // Bowler concedes: bat runs + no-ball penalty (not bye/legbye extras)
+      let bowlerRuns = 0;
+      if (isWide) bowlerRuns = totalRunsToAdd;
+      else if (isNoBall) bowlerRuns = totalRunsToAdd; // nb penalty + bat runs
+      else if (isBye || isLegBye) bowlerRuns = 0; // bye/legbye not charged to bowler
+      else bowlerRuns = batsmanRuns + overthrowRuns;
+
+      innings.currentBowler.runs += bowlerRuns;
+
+      if (isLegal) {
         innings.currentBowler.balls += 1;
         if (innings.currentBowler.balls === 6) {
           innings.currentBowler.overs += 1;
           innings.currentBowler.balls = 0;
           
-          // Over complete - bowler must be changed
-          // Save current bowler stats to bowling array
-          const existingBowlerIndex = innings.bowling.findIndex(b => b.player.toString() === innings.currentBowler.player.toString());
+          // Save bowler stats to bowling array
+          const existingBowlerIndex = innings.bowling.findIndex(
+            b => b.player && b.player.toString() === innings.currentBowler.player.toString()
+          );
+          const bowlerSnapshot = {
+            player: innings.currentBowler.player,
+            overs: innings.currentBowler.overs,
+            balls: innings.currentBowler.balls,
+            runs: innings.currentBowler.runs,
+            wickets: innings.currentBowler.wickets,
+          };
           if (existingBowlerIndex >= 0) {
-            innings.bowling[existingBowlerIndex] = innings.currentBowler;
+            innings.bowling[existingBowlerIndex] = bowlerSnapshot;
           } else {
-            innings.bowling.push({ ...innings.currentBowler });
+            innings.bowling.push(bowlerSnapshot);
           }
           
           // Clear current bowler to force selection of new bowler
           innings.currentBowler = { player: null, overs: 0, balls: 0, runs: 0, wickets: 0 };
         }
       }
-      innings.currentBowler.runs += runs || 0;
+
       if (isWicket) {
-        innings.currentBowler.wickets += 1;
+        // Wicket: only count if bowler's wicket (not run out)
+        const runOutTypes = ['run out'];
+        if (!runOutTypes.includes(dismissalType)) {
+          innings.currentBowler.wickets += 1;
+        }
         innings.wickets += 1;
         
-        // Add to fall of wickets
         if (!innings.fallOfWickets) innings.fallOfWickets = [];
         innings.fallOfWickets.push({
           runs: innings.runs,
@@ -306,9 +369,15 @@ router.post('/:id/ball', protect, adminOnly, async (req, res) => {
       }
     }
 
-    // Rotate strike on odd runs (1, 3, 5) or end of over - but NOT on wicket or 4/6
-    if (!isWicket && !isExtra && runs !== 4 && runs !== 6) {
-      if ((runs % 2 === 1) || innings.balls === 0) {
+    // Strike rotation:
+    // Odd bat runs → rotate (1,3,5)
+    // End of over (balls just became 0 after incrementing) → rotate
+    // Wide → no rotation (batsman stays)
+    // Wicket → no rotation (new batsman comes in as striker)
+    if (!isWicket && !isWide) {
+      const overJustEnded = isLegal && innings.balls === 0 && innings.overs > 0;
+      const oddRuns = batsmanRuns % 2 === 1;
+      if (oddRuns || overJustEnded) {
         innings.currentBatsmen.forEach(b => b.isStriker = !b.isStriker);
       }
     }
@@ -322,6 +391,56 @@ router.post('/:id/ball', protect, adminOnly, async (req, res) => {
       .populate('teamA teamB')
       .populate('innings1.currentBatsmen.player innings1.currentBowler.player innings2.currentBatsmen.player innings2.currentBowler.player', 'name');
     
+    res.json(updatedMatch);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Undo last ball (admin)
+router.post('/:id/undo', protect, adminOnly, async (req, res) => {
+  try {
+    const { inningsNum } = req.body;
+    const match = await Match.findById(req.params.id);
+    if (!match) return res.status(404).json({ message: 'Match not found' });
+
+    const inningsKey = inningsNum === 1 ? 'innings1' : 'innings2';
+    const innings = match[inningsKey];
+    if (!innings || !innings.ballByBall || innings.ballByBall.length === 0) {
+      return res.status(400).json({ message: 'No balls to undo' });
+    }
+
+    const lastBall = innings.ballByBall[innings.ballByBall.length - 1];
+    innings.ballByBall.pop();
+
+    // Reverse runs
+    innings.runs = Math.max(0, innings.runs - (lastBall.runs || 0));
+    innings.extras = Math.max(0, innings.extras - (lastBall.extraRuns || 0));
+
+    // Reverse ball count
+    if (lastBall.isLegal) {
+      if (innings.balls === 0 && innings.overs > 0) {
+        innings.overs -= 1;
+        innings.balls = 5;
+      } else {
+        innings.balls = Math.max(0, innings.balls - 1);
+      }
+    }
+
+    // Reverse wicket
+    if (lastBall.isWicket) {
+      innings.wickets = Math.max(0, innings.wickets - 1);
+      if (innings.fallOfWickets && innings.fallOfWickets.length > 0) {
+        innings.fallOfWickets.pop();
+      }
+    }
+
+    await match.save();
+
+    const updatedMatch = await Match.findById(req.params.id)
+      .populate('teamA teamB')
+      .populate('innings1.currentBatsmen.player innings1.currentBowler.player innings2.currentBatsmen.player innings2.currentBowler.player', 'name');
+
     res.json(updatedMatch);
   } catch (err) {
     res.status(500).json({ message: err.message });

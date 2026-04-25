@@ -7,8 +7,10 @@ const ballSchema = new mongoose.Schema({
   bowler: { type: mongoose.Schema.Types.ObjectId, ref: 'Player' },
   runs: { type: Number, default: 0 },
   isWicket: { type: Boolean, default: false },
-  dismissalType: { type: String, default: '' }, // bowled, caught, lbw, run out, etc
-  extras: { type: String, default: '' }, // wd, nb, lb, b
+  dismissalType: { type: String, default: '' }, // bowled, caught, lbw, run out, stumped, hit wicket, retired out
+  extras: { type: String, default: '' }, // wd, nb, lb, b, ot (overthrow)
+  extraRuns: { type: Number, default: 0 }, // extra runs from wide/nb/bye/legbye/overthrow
+  isLegal: { type: Boolean, default: true }, // false for wide/no-ball (doesn't count in over)
   commentary: { type: String, default: '' },
 }, { _id: true });
 
