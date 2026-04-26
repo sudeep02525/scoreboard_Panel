@@ -23,6 +23,9 @@ app.use('/api/players', require('./routes/players'));
 app.use('/api/matches', require('./routes/matches'));
 app.use('/api/standings', require('./routes/standings'));
 
+// API root endpoint
+app.get('/api', (req, res) => res.json({ message: 'Cricket Scoreboard API running', status: 'ok' }));
+
 app.get('/', (req, res) => res.send('Cricket Scoreboard API running'));
 
 mongoose
