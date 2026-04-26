@@ -89,10 +89,10 @@ function DashboardContent() {
             </div>
             
             <div className="flex-1 text-center md:text-left">
-              <h1 className="text-3xl md:text-4xl font-black text-white mb-2">
-                APL <span className="text-yellow-500">Scoreboard</span>
+              <h1 className="text-4xl md:text-5xl font-bebas font-black text-white mb-2 tracking-wider">
+                APL <span className="text-yellow-500">SCOREBOARD</span>
               </h1>
-              <p className="text-slate-400 text-sm md:text-base flex items-center gap-2 justify-center md:justify-start">
+              <p className="text-slate-400 text-sm md:text-base flex items-center gap-2 justify-center md:justify-start font-roboto">
                 {liveMatches.length > 0 ? (
                   <>
                     <svg className="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 20 20"><circle cx="10" cy="10" r="8"/></svg>

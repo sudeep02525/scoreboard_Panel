@@ -49,7 +49,7 @@ export default function MatchCard({ match }) {
         <div className="relative flex items-center justify-between gap-3 mb-5 flex-1">
           {/* Team A */}
           <div className="flex-1 min-w-0">
-            <h3 className="text-sm font-bold text-white mb-3 truncate">{match.teamA?.name}</h3>
+            <h3 className="text-sm font-bebas font-bold text-white mb-3 truncate uppercase tracking-wider">{match.teamA?.name}</h3>
             {match.innings1 ? (
               <div>
                 <div className="flex items-baseline gap-1">
@@ -70,7 +70,7 @@ export default function MatchCard({ match }) {
 
           {/* Team B */}
           <div className="flex-1 text-right min-w-0">
-            <h3 className="text-sm font-bold text-white mb-3 truncate">{match.teamB?.name}</h3>
+            <h3 className="text-sm font-bebas font-bold text-white mb-3 truncate uppercase tracking-wider">{match.teamB?.name}</h3>
             {match.innings2 ? (
               <div>
                 <div className="flex items-baseline gap-1 justify-end">

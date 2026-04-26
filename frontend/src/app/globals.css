@@ -1,6 +1,8 @@
 @import "tailwindcss";
 
 :root {
+  --font-bebas: 'Bebas Neue', sans-serif;
+  --font-roboto: 'Roboto', sans-serif;
   --bg-primary: #060e1a;
   --bg-secondary: #0a1628;
   --bg-card: #0d1b2e;
@@ -33,12 +35,16 @@
 body {
   background: var(--bg-primary);
   color: var(--text-primary);
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--font-roboto), -apple-system, BlinkMacSystemFont, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 html, body { height: 100%; margin: 0; padding: 0; overflow-x: hidden; }
+
+/* ─── Font Classes ─── */
+.font-bebas { font-family: var(--font-bebas); letter-spacing: 0.05em; }
+.font-roboto { font-family: var(--font-roboto); }
 
 /* ─── Scrollbar ─── */
 ::-webkit-scrollbar { width: 5px; }
