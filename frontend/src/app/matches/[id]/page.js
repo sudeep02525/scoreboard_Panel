@@ -96,7 +96,7 @@ export default function MatchDetailPage() {
         </div>
 
         {/* Main Scoreboard */}
-        {innings && (
+        {(innings || isLive) && (
           <div className="premium-card p-6 md:p-8 animate-slide-up">
             <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
               <div>
@@ -178,7 +178,7 @@ export default function MatchDetailPage() {
         <div className="grid md:grid-cols-2 gap-6">
           
           {/* Current Players */}
-          {innings && (
+          {(innings || isLive) && (
             <div className="premium-card p-6 animate-slide-up">
               <h4 className="text-sm font-bold text-gray-400 mb-4 flex items-center gap-2">
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -187,7 +187,7 @@ export default function MatchDetailPage() {
                 BATSMEN
               </h4>
               <div className="space-y-3">
-                {striker && (
+                {striker ? (
                   <PlayerRow 
                     name={striker.player?.name || 'Striker'} 
                     runs={striker.runs} 
@@ -196,6 +196,8 @@ export default function MatchDetailPage() {
                     sixes={striker.sixes}
                     isStriker 
                   />
+                ) : (
+                  <p className="text-gray-500 text-sm">Waiting for batsmen...</p>
                 )}
                 {nonStriker && (
                   <PlayerRow 
@@ -216,20 +218,22 @@ export default function MatchDetailPage() {
                   </svg>
                   BOWLER
                 </h4>
-                {currentBowler?.player && (
+                {currentBowler?.player ? (
                   <div className="flex items-center justify-between p-3 rounded-lg bg-gray-800/50">
                     <span className="font-semibold text-white">{currentBowler.player?.name || 'Bowler'}</span>
                     <span className="text-sm text-gray-400">
                       {currentBowler.overs}.{currentBowler.balls} - {currentBowler.runs}/{currentBowler.wickets}
                     </span>
                   </div>
+                ) : (
+                  <p className="text-gray-500 text-sm">Waiting for bowler...</p>
                 )}
               </div>
             </div>
           )}
 
           {/* Last Over */}
-          {innings && (
+          {(innings || isLive) && (
             <div className="premium-card p-6 animate-slide-up">
               <h4 className="text-sm font-bold text-gray-400 mb-4 flex items-center gap-2">
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -247,7 +251,7 @@ export default function MatchDetailPage() {
                 <p className="text-gray-500 text-sm">No balls bowled yet</p>
               )}
 
-              {ballsRemaining > 0 && (
+              {ballsRemaining > 0 && isLive && (
                 <div className="mt-4 pt-4 border-t border-gray-700">
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-gray-400">Balls Remaining</span>
