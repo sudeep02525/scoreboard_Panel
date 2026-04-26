@@ -8,12 +8,7 @@ import { api } from '@/lib/api';
 
 export default function Dashboard() {
   return (
-    <Suspense fallback={
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', background: 'var(--bg-primary)' }}>
-        <div className="spinner" />
-        <style jsx>{`.spinner { width: 32px; height: 32px; border: 2px solid var(--border-default); border-top-color: var(--gold); border-radius: 50%; animation: s 0.8s linear infinite; } @keyframes s { to { transform: rotate(360deg); } }`}</style>
-      </div>
-    }>
+    <Suspense fallback={<LoadingScreen />}>
       <DashboardContent />
     </Suspense>
   );
@@ -47,76 +42,123 @@ function DashboardContent() {
   const completed = allMatches.filter((m) => m.status === 'completed');
   const upcoming = allMatches.filter((m) => m.status === 'scheduled');
 
-  return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg-primary)' }}>
-      <div className="p-4 md:p-8" style={{ maxWidth: '960px', margin: '0 auto' }}>
+  const tabs = [
+    { id: 'live', label: 'Live', count: liveMatches.length, icon: '🔴' },
+    { id: 'upcoming', label: 'Upcoming', count: upcoming.length, icon: '📅' },
+    { id: 'results', label: 'Results', count: completed.length, icon: '✅' },
+    { id: 'standings', label: 'Standings', icon: '🏆' },
+  ];
 
-        {/* Welcome card */}
-        <div className="card animate-fade-in flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-5" style={{
-          padding: '24px', marginBottom: '32px',
-        }}>
-          <div style={{ position: 'relative', flexShrink: 0 }}>
-            <Image src="/logo.png" alt="Logo" width={80} height={80} unoptimized
-              style={{ objectFit: 'contain', filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.4))' }} />
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+      <div className="max-w-7xl mx-auto px-4 md:px-6 py-6 space-y-6">
+
+        {/* Hero Header */}
+        <div className="bg-gradient-to-r from-slate-900/90 to-slate-800/90 backdrop-blur-xl rounded-2xl border border-slate-700/50 p-6 md:p-8 shadow-2xl">
+          <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
+            <div className="relative">
+              <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-yellow-500 to-orange-500 p-1 shadow-xl">
+                <div className="w-full h-full rounded-xl bg-slate-900 flex items-center justify-center overflow-hidden">
+                  <Image src="/logo.png" alt="Logo" width={64} height={64} unoptimized className="object-contain" />
+                </div>
+              </div>
+              {liveMatches.length > 0 && (
+                <div className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-red-500 border-4 border-slate-900 flex items-center justify-center shadow-lg">
+                  <span className="text-xs font-black text-white">{liveMatches.length}</span>
+                </div>
+              )}
+            </div>
+            
+            <div className="flex-1 text-center md:text-left">
+              <h1 className="text-3xl md:text-4xl font-black text-white mb-2">
+                APL <span className="text-yellow-500">Scoreboard</span>
+              </h1>
+              <p className="text-slate-400 text-sm md:text-base">
+                {liveMatches.length > 0 
+                  ? `🔥 ${liveMatches.length} match${liveMatches.length > 1 ? 'es' : ''} live right now!` 
+                  : '📺 No live matches. Check upcoming fixtures.'}
+              </p>
+            </div>
+
             {liveMatches.length > 0 && (
-              <div style={{
-                position: 'absolute', bottom: '-2px', right: '-2px',
-                width: '16px', height: '16px', borderRadius: '50%',
-                background: 'var(--red)', border: '2px solid var(--bg-card)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: '8px', fontWeight: 800, color: '#fff',
-              }}>{liveMatches.length}</div>
+              <div className="flex items-center gap-2 px-5 py-3 rounded-full bg-red-500/20 border-2 border-red-500/50 shadow-lg shadow-red-500/20">
+                <span className="relative flex h-3 w-3">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                </span>
+                <span className="text-sm font-black text-red-400 uppercase tracking-wider">Live</span>
+              </div>
             )}
           </div>
-          <div style={{ flex: 1 }}>
-            <h1 style={{ fontSize: '20px', fontWeight: 800, color: 'var(--gold)', marginBottom: '4px' }}>
-              APL Scoreboard
-            </h1>
-            <p style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
-              {liveMatches.length > 0 ? `${liveMatches.length} match${liveMatches.length > 1 ? 'es' : ''} live right now!` : 'No live matches right now. Check upcoming fixtures.'}
-            </p>
+        </div>
+
+        {/* Tabs */}
+        <div className="bg-slate-900/50 backdrop-blur-xl rounded-2xl border border-slate-700/50 p-2 shadow-xl">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`relative px-4 py-3 rounded-xl font-bold text-sm transition-all duration-200 ${
+                  activeTab === tab.id
+                    ? 'bg-gradient-to-r from-yellow-500 to-orange-500 text-white shadow-lg shadow-yellow-500/20'
+                    : 'bg-slate-800/50 text-slate-400 hover:bg-slate-800 hover:text-white'
+                }`}
+              >
+                <div className="flex items-center justify-center gap-2">
+                  <span className="text-lg">{tab.icon}</span>
+                  <span>{tab.label}</span>
+                  {tab.count !== undefined && tab.count > 0 && (
+                    <span className={`ml-1 px-2 py-0.5 rounded-full text-xs font-black ${
+                      activeTab === tab.id ? 'bg-white/20' : 'bg-slate-700'
+                    }`}>
+                      {tab.count}
+                    </span>
+                  )}
+                </div>
+              </button>
+            ))}
           </div>
-          {liveMatches.length > 0 && (
-            <div style={{
-              display: 'flex', alignItems: 'center', gap: '8px',
-              padding: '8px 16px', borderRadius: '8px',
-              background: 'rgba(239, 68, 68, 0.08)', border: '1px solid rgba(239, 68, 68, 0.15)',
-              fontSize: '11px', fontWeight: 700, color: 'var(--red)', letterSpacing: '0.08em',
-            }}>
-              <span className="pulse-dot" style={{ width: '6px', height: '6px' }} />
-              LIVE
-            </div>
-          )}
         </div>
 
         {/* Content */}
         {loading ? (
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '80px 0' }}>
-            <div className="spinner" />
-            <style jsx>{`.spinner { width: 32px; height: 32px; border: 2px solid var(--border-default); border-top-color: var(--gold); border-radius: 50%; animation: s 0.8s linear infinite; } @keyframes s { to { transform: rotate(360deg); } }`}</style>
+          <div className="flex items-center justify-center py-20">
+            <div className="relative">
+              <div className="w-16 h-16 border-4 border-slate-700 border-t-yellow-500 rounded-full animate-spin"></div>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="text-2xl">🏏</span>
+              </div>
+            </div>
           </div>
         ) : (
           <>
             {activeTab === 'live' && (
-              <Section matches={liveMatches}
-                emptyIcon={<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="1.2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>}
+              <Section 
+                matches={liveMatches}
+                emptyIcon="⏰"
                 emptyText="No live matches right now"
-                emptySub="Matches will appear here when they start" />
+                emptySub="Matches will appear here when they start"
+              />
             )}
             {activeTab === 'upcoming' && (
-              <Section matches={upcoming}
-                emptyIcon={<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="1.2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>}
+              <Section 
+                matches={upcoming}
+                emptyIcon="📅"
                 emptyText="No upcoming matches"
-                emptySub="Check back later" />
+                emptySub="Check back later for scheduled fixtures"
+              />
             )}
             {activeTab === 'results' && (
-              <Section matches={completed}
-                emptyIcon={<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="1.2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>}
+              <Section 
+                matches={completed}
+                emptyIcon="🏁"
                 emptyText="No results yet"
-                emptySub="Completed matches will appear here" />
+                emptySub="Completed matches will appear here"
+              />
             )}
             {activeTab === 'standings' && (
-              <div className="animate-fade-in" style={{ display: 'grid', gap: '20px', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))' }}>
+              <div className="grid md:grid-cols-2 gap-6">
                 <StandingsTable teams={standings.groupA} groupName="A" />
                 <StandingsTable teams={standings.groupB} groupName="B" />
               </div>
@@ -131,19 +173,33 @@ function DashboardContent() {
 function Section({ matches, emptyIcon, emptyText, emptySub }) {
   if (!matches || matches.length === 0) {
     return (
-      <div className="card animate-fade-in" style={{
-        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-        padding: '72px 24px', textAlign: 'center',
-      }}>
-        <div style={{ marginBottom: '20px', opacity: 0.5 }}>{emptyIcon}</div>
-        <p style={{ fontWeight: 700, color: 'var(--text-primary)', fontSize: '16px' }}>{emptyText}</p>
-        <p style={{ fontSize: '13px', marginTop: '6px', color: 'var(--text-muted)' }}>{emptySub}</p>
+      <div className="bg-slate-900/50 backdrop-blur-xl rounded-2xl border border-slate-700/50 p-16 text-center shadow-xl">
+        <div className="text-6xl mb-4">{emptyIcon}</div>
+        <h3 className="text-xl font-bold text-white mb-2">{emptyText}</h3>
+        <p className="text-slate-400">{emptySub}</p>
       </div>
     );
   }
+  
   return (
-    <div className="animate-fade-in" style={{ display: 'grid', gap: '16px', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))' }}>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {matches.map((m) => <MatchCard key={m._id} match={m} />)}
+    </div>
+  );
+}
+
+function LoadingScreen() {
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center">
+      <div className="text-center">
+        <div className="relative w-20 h-20 mx-auto mb-4">
+          <div className="absolute inset-0 border-4 border-slate-700 border-t-yellow-500 rounded-full animate-spin"></div>
+          <div className="absolute inset-0 flex items-center justify-center">
+            <span className="text-3xl">🏏</span>
+          </div>
+        </div>
+        <p className="text-slate-400 font-semibold">Loading matches...</p>
+      </div>
     </div>
   );
 }
