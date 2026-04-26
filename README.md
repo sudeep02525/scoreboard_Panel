@@ -100,13 +100,13 @@ This project is structured as a **Monorepo**. You can easily deploy the frontend
 
 ---
 
-## 🔐 Default Admin Credentials
+<!-- ## 🔐 Default Admin Credentials
 
 If you create an admin using the provided script (`node backend/scripts/createAdmin.js`), you can log in at `/admin/login` using:
 * **Email:** `admin@cricket.com`
 * **Password:** `admin123`
 
----
+--- -->
 
 <div align="center">
   <i>Designed for modern cricket tournaments.</i>
