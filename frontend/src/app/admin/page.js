@@ -12,7 +12,7 @@ export default function AdminDashboard() {
   const [stats, setStats] = useState({ teams: 0, players: 0, matches: 0, live: 0 });
 
   useEffect(() => {
-    if (!loading && (!user || user.role !== 'admin')) router.push('/login');
+    if (!loading && (!user || user.role !== 'admin')) router.push('/admin/login');
   }, [user, loading, router]);
 
   useEffect(() => {

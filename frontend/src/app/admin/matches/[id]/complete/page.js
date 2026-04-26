@@ -15,7 +15,7 @@ export default function CompleteMatchPage() {
   const [msg, setMsg] = useState('');
 
   useEffect(() => {
-    if (!loading && (!user || user.role !== 'admin')) router.push('/login');
+    if (!loading && (!user || user.role !== 'admin')) router.push('/admin/login');
     else api.get(`/matches/${id}`).then((d) => { if (d._id) setMatch(d); });
   }, [loading, user, id]);
 

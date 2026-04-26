@@ -14,7 +14,7 @@ export default function AdminTeams() {
   const [deleteConfirm, setDeleteConfirm] = useState(null);
 
   useEffect(() => {
-    if (!loading && (!user || user.role !== 'admin')) router.push('/login');
+    if (!loading && (!user || user.role !== 'admin')) router.push('/admin/login');
     else loadTeams();
   }, [loading, user]);
 

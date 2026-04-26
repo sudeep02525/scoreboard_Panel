@@ -17,7 +17,7 @@ export default function AdminPlayers() {
   const [deleteConfirm, setDeleteConfirm] = useState(null);
 
   useEffect(() => {
-    if (!loading && (!user || user.role !== 'admin')) router.push('/login');
+    if (!loading && (!user || user.role !== 'admin')) router.push('/admin/login');
     else { api.get('/teams').then((d) => { if (Array.isArray(d)) setTeams(d); }); loadPlayers(); }
   }, [loading, user]);
 
