@@ -1,5 +1,7 @@
-const router = require('express').Router();
-const Team = require('../models/Team');
+import express from 'express';
+import Team from '../models/Team.js';
+
+const router = express.Router();
 
 // Get standings for a group
 router.get('/:group', async (req, res) => {
@@ -24,4 +26,4 @@ router.get('/', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

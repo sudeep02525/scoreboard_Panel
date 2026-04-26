@@ -1,12 +1,14 @@
-const router = require('express').Router();
-const Player = require('../models/Player');
-const Team = require('../models/Team');
-const multer = require('multer');
-const csv = require('csv-parser');
-const fs = require('fs');
-const os = require('os');
+import express from 'express';
+import Player from '../models/Player.js';
+import Team from '../models/Team.js';
+import multer from 'multer';
+import csv from 'csv-parser';
+import fs from 'fs';
+import os from 'os';
+import { protect, adminOnly } from '../middleware/auth.js';
+
+const router = express.Router();
 const upload = multer({ dest: os.tmpdir() });
-const { protect, adminOnly } = require('../middleware/auth');
 
 // Get all players
 router.get('/', async (req, res) => {
@@ -111,4 +113,4 @@ router.post('/import', protect, adminOnly, upload.single('file'), async (req, re
     });
 });
 
-module.exports = router;
+export default router;

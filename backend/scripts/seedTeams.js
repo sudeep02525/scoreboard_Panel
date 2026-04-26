@@ -1,6 +1,8 @@
-require('dotenv').config();
-const mongoose = require('mongoose');
-const Team = require('../models/Team');
+import dotenv from 'dotenv';
+import mongoose from 'mongoose';
+import Team from '../models/Team.js';
+
+dotenv.config();
 
 async function seed() {
   await mongoose.connect(process.env.MONGO_URI);

@@ -1,8 +1,10 @@
 // Run: node scripts/createAdmin.js
-require('dotenv').config();
-const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
-const User = require('../models/User');
+import dotenv from 'dotenv';
+import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
+import User from '../models/User.js';
+
+dotenv.config();
 
 async function main() {
   await mongoose.connect(process.env.MONGO_URI);

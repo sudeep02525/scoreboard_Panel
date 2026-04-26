@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const ballSchema = new mongoose.Schema({
   over: { type: Number, required: true },
@@ -91,4 +91,4 @@ const matchSchema = new mongoose.Schema({
   overs: { type: Number, default: 6 }, // configurable overs per match
 }, { timestamps: true });
 
-module.exports = mongoose.model('Match', matchSchema);
+export default mongoose.model('Match', matchSchema);

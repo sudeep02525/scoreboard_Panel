@@ -1,7 +1,9 @@
-const router = require('express').Router();
-const Team = require('../models/Team');
-const Player = require('../models/Player');
-const { protect, adminOnly } = require('../middleware/auth');
+import express from 'express';
+import Team from '../models/Team.js';
+import Player from '../models/Player.js';
+import { protect, adminOnly } from '../middleware/auth.js';
+
+const router = express.Router();
 
 // Get all teams
 router.get('/', async (req, res) => {
@@ -65,4 +67,4 @@ router.delete('/:id', protect, adminOnly, async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

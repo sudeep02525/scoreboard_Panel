@@ -1,7 +1,9 @@
-const router = require('express').Router();
-const Match = require('../models/Match');
-const Team = require('../models/Team');
-const { protect, adminOnly } = require('../middleware/auth');
+import express from 'express';
+import Match from '../models/Match.js';
+import Team from '../models/Team.js';
+import { protect, adminOnly } from '../middleware/auth.js';
+
+const router = express.Router();
 
 // Get all matches
 router.get('/', async (req, res) => {
@@ -592,4 +594,4 @@ router.post('/generate-final', protect, adminOnly, async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;
