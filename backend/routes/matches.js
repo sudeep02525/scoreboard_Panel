@@ -278,7 +278,7 @@ router.post('/:id/ball', protect, adminOnly, async (req, res) => {
         // Save current bowler stats to bowling array
         if (innings.currentBowler.player) {
           const existingBowlerIndex = innings.bowling.findIndex(
-            b => b.player.toString() === innings.currentBowler.player.toString()
+            b => b.player?.toString() === innings.currentBowler.player?.toString()
           );
           if (existingBowlerIndex >= 0) {
             innings.bowling[existingBowlerIndex] = { ...innings.currentBowler };
@@ -334,7 +334,7 @@ router.post('/:id/ball', protect, adminOnly, async (req, res) => {
         // Save striker stats to batting array before removing
         if (striker) {
           const existingBatsmanIndex = innings.batting.findIndex(
-            b => b.player.toString() === striker.player.toString()
+            b => b.player?.toString() === striker.player?.toString()
           );
           if (existingBatsmanIndex >= 0) {
             innings.batting[existingBatsmanIndex] = { ...striker };
@@ -375,7 +375,7 @@ router.post('/:id/ball', protect, adminOnly, async (req, res) => {
       // Save all current batsmen to batting array
       innings.currentBatsmen.forEach(batsman => {
         const existingIndex = innings.batting.findIndex(
-          b => b.player.toString() === batsman.player.toString()
+          b => b.player?.toString() === batsman.player?.toString()
         );
         if (existingIndex >= 0) {
           innings.batting[existingIndex] = { ...batsman };
@@ -387,7 +387,7 @@ router.post('/:id/ball', protect, adminOnly, async (req, res) => {
       // Save current bowler to bowling array
       if (innings.currentBowler.player) {
         const existingBowlerIndex = innings.bowling.findIndex(
-          b => b.player.toString() === innings.currentBowler.player.toString()
+          b => b.player?.toString() === innings.currentBowler.player?.toString()
         );
         if (existingBowlerIndex >= 0) {
           innings.bowling[existingBowlerIndex] = { ...innings.currentBowler };
@@ -479,8 +479,8 @@ router.put('/:id/players', protect, adminOnly, async (req, res) => {
 
     // Update batsmen
     if (strikerId && nonStrikerId) {
-      const existingStriker = innings.currentBatsmen.find(b => b.player.toString() === strikerId);
-      const existingNonStriker = innings.currentBatsmen.find(b => b.player.toString() === nonStrikerId);
+      const existingStriker = innings.currentBatsmen.find(b => b.player?.toString() === strikerId);
+      const existingNonStriker = innings.currentBatsmen.find(b => b.player?.toString() === nonStrikerId);
 
       innings.currentBatsmen = [
         existingStriker || { player: strikerId, runs: 0, balls: 0, fours: 0, sixes: 0, isStriker: true },
@@ -493,7 +493,7 @@ router.put('/:id/players', protect, adminOnly, async (req, res) => {
 
     // Update bowler
     if (bowlerId) {
-      const existingBowler = innings.bowling?.find(b => b.player.toString() === bowlerId);
+      const existingBowler = innings.bowling?.find(b => b.player?.toString() === bowlerId);
       innings.currentBowler = existingBowler || { player: bowlerId, overs: 0, balls: 0, runs: 0, wickets: 0 };
     }
 
@@ -526,7 +526,7 @@ router.put('/:id/complete', protect, adminOnly, async (req, res) => {
     teamA.stats.played += 1;
     teamB.stats.played += 1;
 
-    if (winnerId.toString() === teamA._id.toString()) {
+    if (winnerId?.toString() === teamA._id?.toString()) {
       teamA.stats.won += 1;
       teamA.stats.points += 2;
       teamB.stats.lost += 1;
