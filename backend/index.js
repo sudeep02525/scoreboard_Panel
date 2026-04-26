@@ -6,14 +6,12 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// CORS configuration for production
-const corsOptions = {
-  origin: process.env.FRONTEND_URL || '*',
-  credentials: true,
-  optionsSuccessStatus: 200
-};
-
-app.use(cors(corsOptions));
+// CORS configuration for production - allow all origins
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
 app.use(express.json());
 
 // Routes
