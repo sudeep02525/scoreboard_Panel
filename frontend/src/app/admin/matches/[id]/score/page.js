@@ -134,6 +134,15 @@ export default function ScorePage() {
     if (res._id) {
       setMatch(res);
       const updatedInnings = inningsNum === 1 ? res.innings1 : res.innings2;
+      
+      // Update striker/non-striker from backend response
+      if (updatedInnings?.currentBatsmen?.length > 0) {
+        const striker = updatedInnings.currentBatsmen.find(b => b.isStriker);
+        const nonStriker = updatedInnings.currentBatsmen.find(b => !b.isStriker);
+        if (striker) setStrikerId(striker.player._id || striker.player);
+        if (nonStriker) setNonStrikerId(nonStriker.player._id || nonStriker.player);
+      }
+      
       if (!updatedInnings?.currentBowler?.player) {
         setBowlerId('');
         showMsg('Over complete! Select new bowler', 'info', 4000);
