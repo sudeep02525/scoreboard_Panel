@@ -148,7 +148,25 @@ router.put('/:id/score', protect, adminOnly, async (req, res) => {
     if (!match) return res.status(404).json({ message: 'Match not found' });
 
     const inningsKey = inningsNum === 1 ? 'innings1' : 'innings2';
-    if (!match[inningsKey]) match[inningsKey] = {};
+    
+    // Initialize innings if not exists
+    if (!match[inningsKey]) {
+      match[inningsKey] = {
+        team: inningsNum === 1 ? match.teamA : match.teamB,
+        runs: 0,
+        wickets: 0,
+        overs: 0,
+        balls: 0,
+        extras: 0,
+        currentBatsmen: [],
+        currentBowler: { player: null, overs: 0, balls: 0, runs: 0, wickets: 0 },
+        ballByBall: [],
+        partnerships: [],
+        fallOfWickets: [],
+        batting: [],
+        bowling: [],
+      };
+    }
 
     if (runs !== undefined) match[inningsKey].runs = runs;
     if (wickets !== undefined) match[inningsKey].wickets = wickets;
@@ -159,6 +177,7 @@ router.put('/:id/score', protect, adminOnly, async (req, res) => {
     if (bowling) match[inningsKey].bowling = bowling;
 
     match.status = 'live';
+    match.currentInnings = inningsNum;
     await match.save();
     res.json(match);
   } catch (err) {
