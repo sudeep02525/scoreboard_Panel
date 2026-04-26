@@ -9,6 +9,17 @@
     <img src="https://img.shields.io/badge/MongoDB-Database-47A248?style=for-the-badge&logo=mongodb" alt="MongoDB" />
     <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />
   </p>
+
+  <!-- Live Deployment Links -->
+  <h3>🌐 Live Deployment</h3>
+  <p>
+    <a href="https://cricketscoreboard-panel.vercel.app" target="_blank">
+      <img src="https://img.shields.io/badge/Frontend-Vercel-black?style=for-the-badge&logo=vercel" alt="Frontend on Vercel" />
+    </a>
+    <a href="https://scoreboard-panel.onrender.com" target="_blank">
+      <img src="https://img.shields.io/badge/Backend-Render-46E3B7?style=for-the-badge&logo=render" alt="Backend on Render" />
+    </a>
+  </p>
 </div>
 
 ---

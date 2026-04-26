@@ -6,21 +6,7 @@ const User = require('../models/User');
 const generateToken = (user) =>
   jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
-// Register (users only)
-router.post('/register', async (req, res) => {
-  try {
-    const { name, email, password } = req.body;
-    const exists = await User.findOne({ email });
-    if (exists) return res.status(400).json({ message: 'Email already registered' });
-    const hashed = await bcrypt.hash(password, 10);
-    const user = await User.create({ name, email, password: hashed });
-    res.status(201).json({ token: generateToken(user), user: { id: user._id, name: user.name, role: user.role } });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
-
-// Login (admin + users)
+// Login (admin only)
 router.post('/login', async (req, res) => {
   try {
     const email = req.body.email.trim().toLowerCase();
