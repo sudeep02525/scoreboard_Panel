@@ -20,7 +20,7 @@ const bebasNeue = Bebas_Neue({
 
 export const metadata = {
   title: 'APL Scoreboard',
-  description: 'Live cricket scoreboard & tournament panel',
+  description: 'Live cricket scoreboard & tournament panel - Professional Sports Display',
 };
 
 export default function RootLayout({ children }) {
