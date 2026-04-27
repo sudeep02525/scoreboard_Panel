@@ -6,7 +6,7 @@ export default function UserLayout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div style={{ display: 'flex', height: '100dvh', overflow: 'hidden', background: 'var(--bg-primary)' }}>
+    <div style={{ display: 'flex', height: '100dvh', overflow: 'hidden', background: 'var(--bg-primary)', fontFamily: "'DM Mono', monospace" }}>
       {/* Mobile Overlay */}
       {sidebarOpen && (
         <div 

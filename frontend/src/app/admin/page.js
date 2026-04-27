@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 import { useAuth } from '@/context/AuthContext';
 import AdminLayout from '@/components/AdminLayout';
 import { api } from '@/lib/api';
@@ -45,36 +46,102 @@ export default function AdminDashboard() {
 
   return (
     <AdminLayout>
-      <div className="p-4 sm:p-6 md:p-8">
-        <h1 style={{ color: 'var(--text-primary)', fontSize: '26px', fontWeight: 800, marginBottom: '6px', letterSpacing: '-0.02em' }}>Dashboard</h1>
-        <p style={{ color: 'var(--text-muted)', fontSize: '14px', marginBottom: '32px' }}>Live tournament overview & quick actions</p>
+      <div className="min-h-screen bg-linear-to-br from-[#0a0e1a] via-[#0d1117] to-[#080c14] p-4 sm:p-6 md:p-8">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <h1 className="text-5xl font-black text-white mb-2 tracking-wider font-bebas">
+            ADMIN <span className="text-yellow-500">DASHBOARD</span>
+          </h1>
+          <p className="text-gray-400 text-sm mb-8 font-inter font-medium">Live tournament overview & quick actions</p>
+        </motion.div>
 
         {/* Stats */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8">
-          {statCards.map((s) => (
-            <div key={s.label} className="stat-card">
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-                <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'rgba(201, 162, 39, 0.06)', border: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{s.icon}</div>
-                {s.label === 'Live Now' && stats.live > 0 && <span className="pulse-dot" />}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          {statCards.map((s, index) => (
+            <motion.div 
+              key={s.label}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 + index * 0.1, duration: 0.4 }}
+              whileHover={{ scale: 1.05, y: -5 }}
+              className="relative bg-linear-to-br from-[#1a1f2e] to-[#0f1419] border border-yellow-500/20 rounded-2xl p-6 hover:border-yellow-500/40 transition-all duration-300 hover:shadow-xl hover:shadow-yellow-500/10 overflow-hidden"
+            >
+              <motion.div 
+                animate={{ opacity: [0.1, 0.2, 0.1] }}
+                transition={{ duration: 3, repeat: Infinity }}
+                className="absolute -top-10 -right-10 w-32 h-32 bg-yellow-500/10 rounded-full blur-3xl"
+              />
+              <div className="relative z-10">
+                <div className="flex items-center justify-between mb-4">
+                  <motion.div 
+                    whileHover={{ rotate: 10, scale: 1.1 }}
+                    className="w-12 h-12 rounded-xl bg-linear-to-br from-yellow-500/30 to-yellow-600/10 border-2 border-yellow-500/40 flex items-center justify-center backdrop-blur-sm"
+                  >
+                    {s.icon}
+                  </motion.div>
+                  {s.label === 'Live Now' && stats.live > 0 && (
+                    <motion.span 
+                      animate={{ scale: [1, 1.3, 1] }}
+                      transition={{ duration: 1.5, repeat: Infinity }}
+                      className="w-3 h-3 rounded-full bg-red-500 shadow-lg shadow-red-500/50"
+                    />
+                  )}
+                </div>
+                <motion.p 
+                  key={s.value}
+                  initial={{ scale: 1.2, color: '#FFD700' }}
+                  animate={{ scale: 1, color: '#FFFFFF' }}
+                  transition={{ duration: 0.3 }}
+                  className="text-6xl font-black leading-none font-bebas"
+                >
+                  {s.value}
+                </motion.p>
+                <p className="text-gray-500 text-xs font-bold tracking-widest mt-3 uppercase font-inter">{s.label}</p>
               </div>
-              <p style={{ color: 'var(--text-primary)', fontSize: '32px', fontWeight: 800, lineHeight: 1 }}>{s.value}</p>
-              <p style={{ color: 'var(--text-muted)', fontSize: '11px', fontWeight: 600, letterSpacing: '0.1em', marginTop: '8px', textTransform: 'uppercase' }}>{s.label}</p>
-            </div>
+            </motion.div>
           ))}
         </div>
 
         {/* Actions */}
-        <p style={{ color: 'var(--text-muted)', fontSize: '10px', fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', marginBottom: '14px' }}>Quick Actions</p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-          {actions.map((a) => (
-            <Link key={a.href} href={a.href} style={{ textDecoration: 'none' }}>
-              <div className="card" style={{ padding: '22px', display: 'flex', alignItems: 'center', gap: '16px', cursor: 'pointer' }}>
-                <div style={{ width: '42px', height: '42px', borderRadius: '10px', background: 'rgba(201, 162, 39, 0.06)', border: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>{a.icon}</div>
-                <div style={{ minWidth: 0 }}>
-                  <p style={{ color: 'var(--gold)', fontSize: '14px', fontWeight: 700, marginBottom: '3px' }}>{a.label} →</p>
-                  <p style={{ color: 'var(--text-muted)', fontSize: '12px' }}>{a.sub}</p>
+        <motion.p 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+          className="text-gray-500 text-xs font-bold tracking-widest mb-4 uppercase font-inter"
+        >
+          QUICK ACTIONS
+        </motion.p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {actions.map((a, index) => (
+            <Link key={a.href} href={a.href}>
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6 + index * 0.1, duration: 0.4 }}
+                whileHover={{ scale: 1.02, x: 5 }}
+                className="relative bg-linear-to-br from-[#1a1f2e] to-[#0f1419] border border-yellow-500/20 rounded-2xl p-6 hover:border-yellow-500/40 transition-all duration-300 hover:shadow-xl hover:shadow-yellow-500/10 cursor-pointer overflow-hidden"
+              >
+                <motion.div 
+                  animate={{ opacity: [0.05, 0.15, 0.05] }}
+                  transition={{ duration: 4, repeat: Infinity }}
+                  className="absolute -top-10 -right-10 w-40 h-40 bg-yellow-500/10 rounded-full blur-3xl"
+                />
+                <div className="relative z-10 flex items-center gap-4">
+                  <motion.div 
+                    whileHover={{ rotate: 10, scale: 1.1 }}
+                    className="w-12 h-12 rounded-xl bg-linear-to-br from-yellow-500/30 to-yellow-600/10 border-2 border-yellow-500/40 flex items-center justify-center backdrop-blur-sm shrink-0"
+                  >
+                    {a.icon}
+                  </motion.div>
+                  <div className="min-w-0">
+                    <p className="text-yellow-500 text-base font-black mb-1 font-bebas tracking-wider">{a.label} →</p>
+                    <p className="text-gray-400 text-sm font-inter font-medium">{a.sub}</p>
+                  </div>
                 </div>
-              </div>
+              </motion.div>
             </Link>
           ))}
         </div>

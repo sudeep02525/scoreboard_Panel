@@ -1,10 +1,10 @@
 export default function StandingsTable({ teams, groupName }) {
   return (
-    <div className="bg-gradient-to-br from-slate-900/90 to-slate-800/90 backdrop-blur-xl rounded-2xl border border-slate-700/50 shadow-xl overflow-hidden">
+    <div className="bg-linear-to-br from-slate-900/90 to-slate-800/90 backdrop-blur-xl rounded-2xl border border-slate-700/50 shadow-xl overflow-hidden">
       {/* Header */}
-      <div className="bg-gradient-to-r from-yellow-500/10 to-orange-500/10 px-6 py-4 border-b border-slate-700/50">
+      <div className="bg-linear-to-r from-yellow-500/10 to-orange-500/10 px-6 py-4 border-b border-slate-700/50">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-yellow-500 to-orange-500 flex items-center justify-center shadow-lg">
+          <div className="w-10 h-10 rounded-xl bg-linear-to-br from-yellow-500 to-orange-500 flex items-center justify-center shadow-lg">
             <span className="text-lg font-black text-white">{groupName}</span>
           </div>
           <div>

@@ -92,11 +92,15 @@ export default function ScorePage() {
       if (innings?.currentBatsmen?.length > 0) {
         const striker = innings.currentBatsmen.find(b => b.isStriker);
         const nonStriker = innings.currentBatsmen.find(b => !b.isStriker);
-        if (striker) setStrikerId(striker.player._id || striker.player);
-        if (nonStriker) setNonStrikerId(nonStriker.player._id || nonStriker.player);
+        if (striker?.player) {
+          setStrikerId(typeof striker.player === 'object' ? striker.player._id : striker.player);
+        }
+        if (nonStriker?.player) {
+          setNonStrikerId(typeof nonStriker.player === 'object' ? nonStriker.player._id : nonStriker.player);
+        }
       }
       if (innings?.currentBowler?.player) {
-        setBowlerId(innings.currentBowler.player._id || innings.currentBowler.player);
+        setBowlerId(typeof innings.currentBowler.player === 'object' ? innings.currentBowler.player._id : innings.currentBowler.player);
       }
     }
   };
@@ -107,11 +111,19 @@ export default function ScorePage() {
     if (innings?.currentBatsmen?.length > 0) {
       const striker = innings.currentBatsmen.find(b => b.isStriker);
       const nonStriker = innings.currentBatsmen.find(b => !b.isStriker);
-      setStrikerId(striker?.player?._id || striker?.player || '');
-      setNonStrikerId(nonStriker?.player?._id || nonStriker?.player || '');
+      if (striker?.player) {
+        setStrikerId(typeof striker.player === 'object' ? striker.player._id : striker.player);
+      } else {
+        setStrikerId('');
+      }
+      if (nonStriker?.player) {
+        setNonStrikerId(typeof nonStriker.player === 'object' ? nonStriker.player._id : nonStriker.player);
+      } else {
+        setNonStrikerId('');
+      }
     } else { setStrikerId(''); setNonStrikerId(''); }
     if (innings?.currentBowler?.player) {
-      setBowlerId(innings.currentBowler.player._id || innings.currentBowler.player);
+      setBowlerId(typeof innings.currentBowler.player === 'object' ? innings.currentBowler.player._id : innings.currentBowler.player);
     } else { setBowlerId(''); }
   };
 
@@ -139,8 +151,12 @@ export default function ScorePage() {
       if (updatedInnings?.currentBatsmen?.length > 0) {
         const striker = updatedInnings.currentBatsmen.find(b => b.isStriker);
         const nonStriker = updatedInnings.currentBatsmen.find(b => !b.isStriker);
-        if (striker) setStrikerId(striker.player._id || striker.player);
-        if (nonStriker) setNonStrikerId(nonStriker.player._id || nonStriker.player);
+        if (striker?.player) {
+          setStrikerId(typeof striker.player === 'object' ? striker.player._id : striker.player);
+        }
+        if (nonStriker?.player) {
+          setNonStrikerId(typeof nonStriker.player === 'object' ? nonStriker.player._id : nonStriker.player);
+        }
       }
       
       if (!updatedInnings?.currentBowler?.player) {

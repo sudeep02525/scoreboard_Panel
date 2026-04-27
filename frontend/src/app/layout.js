@@ -1,24 +1,20 @@
-import { Inter, Bebas_Neue, Roboto } from 'next/font/google';
+import { Inter, Bebas_Neue } from 'next/font/google';
 import './globals.css';
 import { AuthProvider } from '@/context/AuthContext';
 
-const inter = Inter({ 
+// Inter - Clean, professional font for body text and general use
+const inter = Inter({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700', '800', '900'],
+  weight: ['300', '400', '500', '600', '700', '800', '900'],
+  variable: '--font-inter',
   display: 'swap',
 });
 
+// Bebas Neue - Bold, condensed font for headings, team names, and scores - SPORTS STYLE
 const bebasNeue = Bebas_Neue({
   subsets: ['latin'],
   weight: '400',
   variable: '--font-bebas',
-  display: 'swap',
-});
-
-const roboto = Roboto({
-  subsets: ['latin'],
-  weight: ['100', '300', '400', '500', '700', '900'],
-  variable: '--font-roboto',
   display: 'swap',
 });
 
@@ -30,7 +26,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={`${inter.className} ${bebasNeue.variable} ${roboto.variable}`}>
+      <body className={`${inter.className} ${inter.variable} ${bebasNeue.variable}`}>
         <AuthProvider>{children}</AuthProvider>
       </body>
     </html>

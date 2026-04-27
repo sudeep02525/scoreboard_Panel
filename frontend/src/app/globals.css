@@ -1,8 +1,9 @@
 @import "tailwindcss";
 
 :root {
-  --font-bebas: 'Bebas Neue', sans-serif;
-  --font-roboto: 'Roboto', sans-serif;
+  /* Sports Scoreboard Fonts */
+  --font-inter: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-bebas: 'Bebas Neue', 'Impact', 'Arial Black', sans-serif;
   --bg-primary: #060e1a;
   --bg-secondary: #0a1628;
   --bg-card: #0d1b2e;
@@ -23,19 +24,28 @@
   --sidebar-w: 260px;
 }
 
-@theme inline {
+.font-bebas {
+  font-family: var(--font-bebas);
+  letter-spacing: 0.05em;
+}
+
+.font-inter {
+  font-family: var(--font-inter);
+}
+
+/* @theme inline {
   --color-background: var(--bg-primary);
   --color-foreground: var(--text-primary);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
+} */
 
 * { box-sizing: border-box; }
 
 body {
   background: var(--bg-primary);
   color: var(--text-primary);
-  font-family: var(--font-roboto), -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--font-inter);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -44,7 +54,7 @@ html, body { height: 100%; margin: 0; padding: 0; overflow-x: hidden; }
 
 /* ─── Font Classes ─── */
 .font-bebas { font-family: var(--font-bebas); letter-spacing: 0.05em; }
-.font-roboto { font-family: var(--font-roboto); }
+.font-inter { font-family: var(--font-inter); }
 
 /* ─── Scrollbar ─── */
 ::-webkit-scrollbar { width: 5px; }
@@ -61,112 +71,180 @@ html, body { height: 100%; margin: 0; padding: 0; overflow-x: hidden; }
   width: var(--sidebar-w);
   min-width: var(--sidebar-w);
   height: 100dvh;
-  background: var(--bg-primary);
-  border-right: 1px solid var(--border-subtle);
+  background: linear-gradient(180deg, #0a0e1a 0%, #060a12 100%);
+  border-right: 1px solid rgba(201, 162, 39, 0.1);
   padding: 0;
 }
 
 .sidebar-logo-area {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 28px 24px 24px;
-  border-bottom: 1px solid var(--border-subtle);
+  padding: 10px;
+  margin: 16px 10px 0;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(201, 162, 39, 0.08), rgba(201, 162, 39, 0.03));
+  border: 1px solid rgba(201, 162, 39, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.sidebar-logo-area::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100px;
+  height: 100px;
+  background: radial-gradient(circle, rgba(201, 162, 39, 0.1), transparent);
+  border-radius: 50%;
+  transform: translate(30%, -30%);
 }
 
 .sidebar-logo-img {
-  width: 80px; height: 80px;
+  width: 48px; height: 48px;
   object-fit: contain;
-  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4));
   flex-shrink: 0;
+  filter: drop-shadow(0 2px 8px rgba(201, 162, 39, 0.3));
+  position: relative;
+  z-index: 1;
 }
 
 .sidebar-brand-name {
-  font-size: 15px;
-  font-weight: 800;
+  font-size: 14px;
+  font-weight: 700;
   color: var(--gold);
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em;
   line-height: 1.2;
+  font-family: var(--font-bebas);
+  text-shadow: 0 0 20px rgba(201, 162, 39, 0.3);
+  position: relative;
+  z-index: 1;
 }
 
 .sidebar-brand-sub {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--text-muted);
   margin-top: 3px;
   font-weight: 500;
+  font-family: var(--font-inter);
+  position: relative;
+  z-index: 1;
 }
 
 .sidebar-section-label {
-  padding: 24px 24px 12px;
+  padding: 20px 20px 10px;
   font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.16em;
+  font-weight: 600;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: var(--text-dim);
+  color: rgba(139, 157, 183, 0.5);
+  font-family: var(--font-inter);
 }
 
 .sidebar-nav {
   flex: 1;
-  padding: 0 14px;
+  padding: 0 12px;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
 }
 
 .sidebar-link {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
   padding: 12px 14px;
-  border-radius: 10px;
-  font-size: 14px;
+  border-radius: 12px;
+  font-size: 13px;
   font-weight: 500;
   text-decoration: none;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   color: var(--text-secondary);
   cursor: pointer;
+  font-family: var(--font-inter);
+  border: 1px solid transparent;
+  position: relative;
+  overflow: hidden;
 }
 
-.sidebar-link svg { flex-shrink: 0; }
+.sidebar-link::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--gold);
+  transform: scaleY(0);
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar-link svg { 
+  flex-shrink: 0; 
+  width: 18px; 
+  height: 18px;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
 
 .sidebar-link:hover {
-  background: rgba(201, 162, 39, 0.04);
-  color: var(--text-primary);
+  background: rgba(201, 162, 39, 0.08);
+  color: var(--gold);
+  transform: translateX(4px);
+}
+
+.sidebar-link:hover svg {
+  transform: scale(1.1);
 }
 
 .sidebar-link.active {
-  background: rgba(201, 162, 39, 0.08);
+  background: linear-gradient(90deg, rgba(201, 162, 39, 0.15), rgba(201, 162, 39, 0.08));
   color: var(--gold);
   font-weight: 600;
+  border-color: rgba(201, 162, 39, 0.2);
+  box-shadow: 0 2px 8px rgba(201, 162, 39, 0.15);
+}
+
+.sidebar-link.active::before {
+  transform: scaleY(1);
 }
 
 .sidebar-bottom {
-  border-top: 1px solid var(--border-subtle);
-  padding: 16px 14px 24px;
+  border-top: 1px solid rgba(201, 162, 39, 0.1);
+  padding: 16px 12px 20px;
 }
 
 .sidebar-user-card {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 14px;
+  gap: 10px;
+  padding: 14px;
   margin-bottom: 8px;
-  background: rgba(201, 162, 39, 0.04);
-  border: 1px solid var(--border-subtle);
+  background: linear-gradient(135deg, rgba(201, 162, 39, 0.06), rgba(201, 162, 39, 0.02));
+  border: 1px solid rgba(201, 162, 39, 0.12);
   border-radius: 12px;
+  font-family: var(--font-inter);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar-user-card:hover {
+  background: linear-gradient(135deg, rgba(201, 162, 39, 0.1), rgba(201, 162, 39, 0.04));
+  border-color: rgba(201, 162, 39, 0.2);
+  transform: translateY(-2px);
 }
 
 .sidebar-avatar {
-  width: 36px; height: 36px;
+  width: 32px; height: 32px;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--gold), #D4A843);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
-  font-weight: 800;
+  font-size: 12px;
+  font-weight: 700;
   color: var(--bg-primary);
   flex-shrink: 0;
+  border: 1px solid var(--gold);
+  box-shadow: 0 2px 8px rgba(201, 162, 39, 0.3);
 }
 
 /* ─── Cards ─── */

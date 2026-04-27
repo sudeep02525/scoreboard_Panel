@@ -21,7 +21,9 @@ router.get('/', async (req, res) => {
 router.get('/live', async (req, res) => {
   try {
     const matches = await Match.find({ status: 'live' })
-      .populate('teamA teamB innings1.batting.player innings1.bowling.player innings2.batting.player innings2.bowling.player', 'name');
+      .populate('teamA teamB', 'name')
+      .populate('innings1.currentBatsmen.player innings2.currentBatsmen.player', 'name')
+      .populate('innings1.currentBowler.player innings2.currentBowler.player', 'name');
     res.json(matches);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -44,7 +46,9 @@ router.get('/:id', async (req, res) => {
   try {
     const match = await Match.findById(req.params.id)
       .populate('teamA teamB tossWinner result.winner', 'name group')
-      .populate('innings1.batting.player innings1.bowling.player innings2.batting.player innings2.bowling.player', 'name');
+      .populate('innings1.batting.player innings1.bowling.player innings2.batting.player innings2.bowling.player', 'name')
+      .populate('innings1.currentBatsmen.player innings2.currentBatsmen.player', 'name')
+      .populate('innings1.currentBowler.player innings2.currentBowler.player', 'name');
     if (!match) return res.status(404).json({ message: 'Match not found' });
     res.json(match);
   } catch (err) {

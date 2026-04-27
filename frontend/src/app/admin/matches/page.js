@@ -25,6 +25,8 @@ export default function AdminMatches() {
   const [msg, setMsg] = useState('');
   const [editingMatch, setEditingMatch] = useState(null);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
+  const [tossModal, setTossModal] = useState(null);
+  const [tossForm, setTossForm] = useState({ tossWinner: '', tossDecision: 'bat' });
 
   useEffect(() => {
     if (!loading && (!user || user.role !== 'admin')) router.push('/admin/login');
@@ -49,6 +51,30 @@ export default function AdminMatches() {
     await api.delete(`/matches/${deleteConfirm}`);
     setMsg('Match deleted successfully!');
     setDeleteConfirm(null);
+    loadMatches();
+    setTimeout(() => setMsg(''), 3000);
+  };
+
+  const handleTossSetup = (match) => {
+    setTossModal(match);
+    setTossForm({
+      tossWinner: match.tossWinner?._id || match.tossWinner || '',
+      tossDecision: match.tossDecision || 'bat'
+    });
+  };
+
+  const saveToss = async (e) => {
+    e.preventDefault();
+    if (!tossModal || !tossForm.tossWinner) return;
+    
+    await api.put(`/matches/${tossModal._id}`, {
+      tossWinner: tossForm.tossWinner,
+      tossDecision: tossForm.tossDecision
+    });
+    
+    setMsg('Toss details saved successfully!');
+    setTossModal(null);
+    setTossForm({ tossWinner: '', tossDecision: 'bat' });
     loadMatches();
     setTimeout(() => setMsg(''), 3000);
   };
@@ -147,6 +173,9 @@ export default function AdminMatches() {
         </span>
         {m.status === 'scheduled' && (
           <>
+            <button onClick={() => handleTossSetup(m)} style={{ padding: '5px 10px', borderRadius: '5px', background: 'rgba(201,162,39,0.2)', color: '#c9a227', border: '1px solid rgba(201,162,39,0.3)', cursor: 'pointer', fontWeight: 600, fontSize: '11px' }}>
+              {m.tossWinner ? '✓ Toss Set' : 'Set Toss'}
+            </button>
             <button onClick={() => setStatus(m._id, 'live')} style={{ padding: '5px 10px', borderRadius: '5px', background: '#ef4444', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: '11px' }}>Start Live</button>
             <button onClick={() => handleEdit(m)} style={{ padding: '5px 10px', borderRadius: '5px', background: 'rgba(255,255,255,0.1)', color: '#8aacbf', border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: '11px' }}>Edit</button>
           </>
@@ -179,6 +208,75 @@ export default function AdminMatches() {
 
   return (
     <AdminLayout>
+      {/* Toss Setup Modal */}
+      {tossModal && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 50 }}>
+          <div style={{ background: '#112240', border: '1px solid rgba(201,162,39,0.3)', borderRadius: '10px', padding: '24px', maxWidth: '420px', width: '100%', margin: '0 16px' }}>
+            <p style={{ color: '#c9a227', fontWeight: 700, fontSize: '16px', marginBottom: '4px' }}>Set Toss Details</p>
+            <p style={{ color: '#4a6a82', fontSize: '12px', marginBottom: '20px' }}>{tossModal.teamA?.name} vs {tossModal.teamB?.name}</p>
+            
+            <form onSubmit={saveToss}>
+              <div style={{ marginBottom: '16px' }}>
+                <label className="block text-xs font-medium mb-2" style={{ color: '#8aacbf' }}>Toss Winner</label>
+                <select 
+                  required
+                  value={tossForm.tossWinner}
+                  onChange={(e) => setTossForm({ ...tossForm, tossWinner: e.target.value })}
+                  className="w-full rounded-lg px-3 py-2 focus:outline-none text-sm"
+                  style={{ background: '#0a1628', border: '1px solid rgba(255,255,255,0.1)', color: '#ffffff' }}>
+                  <option value="">Select Team</option>
+                  <option value={tossModal.teamA?._id || tossModal.teamA}>{tossModal.teamA?.name}</option>
+                  <option value={tossModal.teamB?._id || tossModal.teamB}>{tossModal.teamB?.name}</option>
+                </select>
+              </div>
+
+              <div style={{ marginBottom: '20px' }}>
+                <label className="block text-xs font-medium mb-2" style={{ color: '#8aacbf' }}>Chose to</label>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <button
+                    type="button"
+                    onClick={() => setTossForm({ ...tossForm, tossDecision: 'bat' })}
+                    style={{ 
+                      flex: 1, 
+                      padding: '10px', 
+                      borderRadius: '6px', 
+                      background: tossForm.tossDecision === 'bat' ? '#c9a227' : 'rgba(255,255,255,0.05)', 
+                      color: tossForm.tossDecision === 'bat' ? '#0a1628' : '#8aacbf',
+                      border: tossForm.tossDecision === 'bat' ? 'none' : '1px solid rgba(255,255,255,0.1)',
+                      cursor: 'pointer', 
+                      fontWeight: 600, 
+                      fontSize: '13px' 
+                    }}>
+                    Bat First
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setTossForm({ ...tossForm, tossDecision: 'bowl' })}
+                    style={{ 
+                      flex: 1, 
+                      padding: '10px', 
+                      borderRadius: '6px', 
+                      background: tossForm.tossDecision === 'bowl' ? '#c9a227' : 'rgba(255,255,255,0.05)', 
+                      color: tossForm.tossDecision === 'bowl' ? '#0a1628' : '#8aacbf',
+                      border: tossForm.tossDecision === 'bowl' ? 'none' : '1px solid rgba(255,255,255,0.1)',
+                      cursor: 'pointer', 
+                      fontWeight: 600, 
+                      fontSize: '13px' 
+                    }}>
+                    Bowl First
+                  </button>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <button type="button" onClick={() => setTossModal(null)} style={{ flex: 1, padding: '10px', borderRadius: '6px', background: 'rgba(255,255,255,0.1)', color: '#8aacbf', border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: '13px' }}>Cancel</button>
+                <button type="submit" style={{ flex: 1, padding: '10px', borderRadius: '6px', background: '#c9a227', color: '#0a1628', border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: '13px' }}>Save Toss</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       {deleteConfirm && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 50 }}>
           <div style={{ background: '#112240', border: '1px solid rgba(239,68,68,0.4)', borderRadius: '10px', padding: '24px', maxWidth: '360px', width: '100%', margin: '0 16px' }}>
