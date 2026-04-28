@@ -1,164 +1,139 @@
+'use client';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
 
 export default function MatchCard({ match }) {
-  const isLive = match.status === 'live';
-  const isDone = match.status === 'completed';
+  const isLive     = match.status === 'live';
+  const isDone     = match.status === 'completed';
   const isUpcoming = match.status === 'scheduled';
-  
-  // Get current innings data for live matches
+
   const currentInnings = match.currentInnings || 1;
-  const innings = currentInnings === 1 ? match.innings1 : match.innings2;
-  const striker = innings?.currentBatsmen?.find(b => b.isStriker);
+  const innings    = currentInnings === 1 ? match.innings1 : match.innings2;
+  const striker    = innings?.currentBatsmen?.find(b => b.isStriker);
   const nonStriker = innings?.currentBatsmen?.find(b => !b.isStriker);
   const currentBowler = innings?.currentBowler;
 
   return (
-    <Link href={`/matches/${match._id}`} className="block group h-full">
-      <motion.div 
-        whileHover={{ scale: 1.02, y: -4 }}
-        transition={{ duration: 0.2 }}
-        className="relative bg-linear-to-br from-[#1a1f2e] to-[#0f1419] border border-yellow-500/20 rounded-2xl p-5 cursor-pointer hover:border-yellow-500/40 transition-all duration-300 h-full flex flex-col hover:shadow-xl hover:shadow-yellow-500/10 overflow-hidden"
+    <Link href={`/matches/${match._id}`} style={{ display: 'block', textDecoration: 'none' }}>
+      <div style={{
+        position: 'relative',
+        background: 'var(--bg-card)',
+        border: '1px solid var(--border-subtle)',
+        borderRadius: 16,
+        padding: '20px',
+        cursor: 'pointer',
+        overflow: 'hidden',
+        transition: 'border-color .25s, transform .25s, box-shadow .25s',
+      }}
+        onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--border-default)'; e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '0 12px 32px rgba(0,0,0,0.2)'; }}
+        onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-subtle)'; e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}
       >
-        {/* Animated Background Glow */}
-        <motion.div 
-          animate={{ opacity: [0.1, 0.2, 0.1] }}
-          transition={{ duration: 3, repeat: Infinity }}
-          className="absolute -top-10 -right-10 w-40 h-40 bg-yellow-500/10 rounded-full blur-3xl"
-        />
-        
-        <div className="relative z-10">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2 text-xs text-gray-500 font-inter">
-            <span>{match.group}</span>
-            <span className="text-gray-700">•</span>
-            <span className="truncate">{match.ground}</span>
-          </div>
-          
+        {/* Header row */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+          <span style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600 }}>
+            {match.group} · {match.ground}
+          </span>
+
           {isLive && (
-            <motion.div 
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              className="flex items-center gap-2 bg-linear-to-r from-red-950/60 to-red-900/40 border border-red-500/60 rounded-full px-3 py-1 shrink-0 backdrop-blur-sm"
-            >
-              <motion.span 
-                animate={{ scale: [1, 1.3, 1] }}
-                transition={{ duration: 1.5, repeat: Infinity }}
-                className="w-1.5 h-1.5 rounded-full bg-red-500"
-              />
-              <span className="text-xs font-bold text-red-500 uppercase tracking-wider font-bebas">LIVE</span>
-            </motion.div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '4px 10px', borderRadius: 100, background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.4)' }}>
+              <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#ef4444', display: 'inline-block', boxShadow: '0 0 6px #ef4444' }} />
+              <span style={{ fontSize: 10, fontWeight: 800, color: '#ef4444', letterSpacing: '0.1em' }}>LIVE</span>
+            </div>
           )}
-          
           {isDone && (
-            <div className="px-3 py-1 rounded-full bg-green-500/20 border border-green-500/50 shrink-0 backdrop-blur-sm">
-              <span className="text-xs font-bold text-green-400 uppercase font-inter">Finished</span>
-            </div>
+            <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--green)', padding: '4px 10px', borderRadius: 100, background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.3)' }}>
+              FINISHED
+            </span>
           )}
-          
           {isUpcoming && (
-            <div className="px-3 py-1 rounded-full bg-blue-500/20 border border-blue-500/50 shrink-0 backdrop-blur-sm">
-              <span className="text-xs font-bold text-blue-400 uppercase font-inter">Upcoming</span>
-            </div>
+            <span style={{ fontSize: 10, fontWeight: 700, color: '#60a5fa', padding: '4px 10px', borderRadius: 100, background: 'rgba(96,165,250,0.1)', border: '1px solid rgba(96,165,250,0.3)' }}>
+              UPCOMING
+            </span>
           )}
         </div>
 
-        {/* Teams */}
-        <div className="flex items-center gap-4 mb-4">
+        {/* Teams row */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
           {/* Team A */}
-          <div className="flex-1 min-w-0">
-            <div className="text-base font-black text-white uppercase tracking-wider mb-2 truncate font-bebas">
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <p style={{ fontSize: 13, fontWeight: 800, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 6, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {match.teamA?.name}
-            </div>
+            </p>
             {match.innings1 ? (
-              <div>
-                <div className="text-4xl font-black text-yellow-500 leading-none font-bebas">
-                  {match.innings1.runs}<span className="text-xl font-bold text-gray-600">/{match.innings1.wickets}</span>
-                </div>
-                <div className="text-xs text-gray-500 mt-1 font-inter">
+              <>
+                <p style={{ fontSize: 32, fontWeight: 900, color: 'var(--gold)', lineHeight: 1, fontFamily: 'var(--font-bebas)' }}>
+                  {match.innings1.runs}
+                  <span style={{ fontSize: 18, color: 'var(--text-muted)', fontWeight: 700 }}>/{match.innings1.wickets}</span>
+                </p>
+                <p style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 3 }}>
                   ({match.innings1.overs}.{match.innings1.balls} ov)
-                </div>
-              </div>
+                </p>
+              </>
             ) : (
-              <div className="text-2xl text-gray-700 font-bebas font-black">—</div>
+              <p style={{ fontSize: 24, color: 'var(--text-dim)', fontFamily: 'var(--font-bebas)' }}>—</p>
             )}
           </div>
 
-          {/* VS Badge */}
-          <motion.div 
-            whileHover={{ scale: 1.1, rotate: 5 }}
-            className="shrink-0 w-12 h-12 rounded-xl bg-linear-to-br from-yellow-500/30 to-yellow-600/10 border-2 border-yellow-500/40 flex items-center justify-center backdrop-blur-sm shadow-lg shadow-yellow-500/20"
-          >
-            <span className="text-sm font-black text-yellow-500 font-bebas tracking-wider">VS</span>
-          </motion.div>
+          {/* VS */}
+          <div style={{ width: 40, height: 40, borderRadius: 10, background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <span style={{ fontSize: 11, fontWeight: 900, color: 'var(--gold)', fontFamily: 'var(--font-bebas)', letterSpacing: '0.05em' }}>VS</span>
+          </div>
 
           {/* Team B */}
-          <div className="flex-1 text-right min-w-0">
-            <div className="text-base font-black text-white uppercase tracking-wider mb-2 truncate font-bebas">
+          <div style={{ flex: 1, minWidth: 0, textAlign: 'right' }}>
+            <p style={{ fontSize: 13, fontWeight: 800, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 6, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {match.teamB?.name}
-            </div>
+            </p>
             {match.innings2 ? (
-              <div>
-                <div className="text-4xl font-black text-yellow-500 leading-none font-bebas">
-                  {match.innings2.runs}<span className="text-xl font-bold text-gray-600">/{match.innings2.wickets}</span>
-                </div>
-                <div className="text-xs text-gray-500 mt-1 font-inter">
+              <>
+                <p style={{ fontSize: 32, fontWeight: 900, color: 'var(--gold)', lineHeight: 1, fontFamily: 'var(--font-bebas)' }}>
+                  {match.innings2.runs}
+                  <span style={{ fontSize: 18, color: 'var(--text-muted)', fontWeight: 700 }}>/{match.innings2.wickets}</span>
+                </p>
+                <p style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 3 }}>
                   ({match.innings2.overs}.{match.innings2.balls} ov)
-                </div>
-              </div>
+                </p>
+              </>
             ) : (
-              <div className="text-2xl text-gray-700 font-bebas font-black">—</div>
+              <p style={{ fontSize: 24, color: 'var(--text-dim)', fontFamily: 'var(--font-bebas)' }}>—</p>
             )}
           </div>
         </div>
 
         {/* Result */}
         {match.result?.description && (
-          <div className="mt-4 pt-4 border-t border-yellow-500/10">
-            <p className="text-sm font-bold text-center text-yellow-500 truncate font-inter tracking-wide">
+          <div style={{ paddingTop: 12, borderTop: '1px solid var(--border-subtle)', marginTop: 4 }}>
+            <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--gold)', textAlign: 'center' }}>
               {match.result.description}
             </p>
           </div>
         )}
 
-        {/* Live Players Info */}
+        {/* Live player info */}
         {isLive && (striker || currentBowler) && (
-          <div className="mt-auto pt-4 border-t border-yellow-500/10 space-y-2">
+          <div style={{ paddingTop: 12, borderTop: '1px solid var(--border-subtle)', marginTop: 4, display: 'flex', flexDirection: 'column', gap: 6 }}>
             {striker && (
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-gray-400 truncate font-inter font-medium">
-                  {striker.player?.name} *
-                </span>
-                <span className="text-yellow-500 font-black shrink-0 ml-2 font-bebas text-sm">
-                  {striker.runs}({striker.balls})
-                </span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
+                <span style={{ color: 'var(--text-secondary)', fontWeight: 500 }}>{striker.player?.name} *</span>
+                <span style={{ color: 'var(--gold)', fontWeight: 800, fontFamily: 'var(--font-bebas)', fontSize: 13 }}>{striker.runs}({striker.balls})</span>
               </div>
             )}
             {nonStriker && (
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-gray-500 truncate font-inter font-medium">
-                  {nonStriker.player?.name}
-                </span>
-                <span className="text-gray-400 font-black shrink-0 ml-2 font-bebas text-sm">
-                  {nonStriker.runs}({nonStriker.balls})
-                </span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
+                <span style={{ color: 'var(--text-muted)', fontWeight: 500 }}>{nonStriker.player?.name}</span>
+                <span style={{ color: 'var(--text-secondary)', fontWeight: 700, fontFamily: 'var(--font-bebas)', fontSize: 13 }}>{nonStriker.runs}({nonStriker.balls})</span>
               </div>
             )}
             {currentBowler?.player && (
-              <div className="flex items-center justify-between text-xs pt-2 border-t border-yellow-500/10">
-                <span className="text-gray-400 truncate font-inter font-medium">
-                  {currentBowler.player.name}
-                </span>
-                <span className="text-red-500 font-black shrink-0 ml-2 font-bebas text-sm">
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, paddingTop: 6, borderTop: '1px solid var(--border-subtle)' }}>
+                <span style={{ color: 'var(--text-muted)', fontWeight: 500 }}>{currentBowler.player.name}</span>
+                <span style={{ color: 'var(--red)', fontWeight: 800, fontFamily: 'var(--font-bebas)', fontSize: 13 }}>
                   {currentBowler.overs}.{currentBowler.balls}-{currentBowler.runs}/{currentBowler.wickets}
                 </span>
               </div>
             )}
           </div>
         )}
-        </div>
-      </motion.div>
+      </div>
     </Link>
   );
 }

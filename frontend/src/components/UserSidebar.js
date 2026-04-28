@@ -3,6 +3,7 @@ import { Suspense } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useSearchParams } from 'next/navigation';
+import ThemeToggle from '@/components/ThemeToggle';
 
 const navItems = [
   { href: '/dashboard', label: 'Home', isHome: true, icon: 'home' },
@@ -66,6 +67,10 @@ function SidebarInner({ onClose }) {
 
       {/* Bottom */}
       <div className="sidebar-bottom">
+        <div style={{ marginBottom: 12 }}>
+          <p style={{ fontSize: '10px', fontWeight: 700, color: 'var(--text-muted)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 8, paddingLeft: 2 }}>Theme</p>
+          <ThemeToggle />
+        </div>
         <div className="sidebar-user-card" style={{ justifyContent: 'center' }}>
           <div style={{ textAlign: 'center' }}>
             <p style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>APL Tournament</p>

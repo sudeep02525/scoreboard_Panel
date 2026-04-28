@@ -1,26 +1,43 @@
+/**
+ * Seed initial teams for APL Season 8.
+ * Run: node scripts/seedTeams.js
+ */
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import Team from '../models/Team.js';
 
 dotenv.config();
 
+const TEAMS = [
+  { name: 'Royal Challengers',  group: 'A' },
+  { name: 'Axion',              group: 'A' },
+  { name: 'Syndicate',          group: 'A' },
+  { name: '404 NOT FOUND',      group: 'A' },
+  { name: '401 UNAUTHORISED',   group: 'B' },
+  { name: 'Strikers',           group: 'B' },
+  { name: 'Chase Masters',      group: 'B' },
+  { name: 'Elite Warriors',     group: 'B' },
+];
+
 async function seed() {
   await mongoose.connect(process.env.MONGO_URI);
-  const teams = [
-    'Royal Challengers', 'Axion', 'syndicate', '404 NOT FOUND', 
-    '401 UNAUTHORISED', 'Strikers', 'Chase Masters', 'Elite Warriors'
-  ];
-  
-  for(let i=0; i<teams.length; i++) {
-    const name = teams[i];
-    const group = i < 4 ? 'A' : 'B';
-    const existing = await Team.findOne({ name: { $regex: new RegExp('^'+name+'$', 'i') } });
-    if(!existing) {
+  console.log('MongoDB connected');
+
+  for (const { name, group } of TEAMS) {
+    const existing = await Team.findOne({ name: { $regex: new RegExp(`^${name}$`, 'i') } });
+    if (!existing) {
       await Team.create({ name, group });
-      console.log('Created team:', name);
+      console.log(`Created: ${name} (Group ${group})`);
+    } else {
+      console.log(`Skipped (exists): ${name}`);
     }
   }
-  console.log('Teams ready');
+
+  console.log('Seeding complete.');
   process.exit(0);
 }
-seed();
+
+seed().catch((err) => {
+  console.error('Seed failed:', err.message);
+  process.exit(1);
+});

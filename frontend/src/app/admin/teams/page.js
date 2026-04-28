@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import AdminLayout from '@/components/AdminLayout';
 import { useAuth } from '@/context/AuthContext';
-import { api } from '@/lib/api';
+import { api } from '@/services/api';
 
 export default function AdminTeams() {
   const { user, loading } = useAuth();

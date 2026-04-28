@@ -3,9 +3,8 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import AdminLayout from '@/components/AdminLayout';
 import { useAuth } from '@/context/AuthContext';
-import { api } from '@/lib/api';
-
-const ROLES = ['batsman', 'bowler', 'allrounder', 'wicketkeeper'];
+import { api } from '@/services/api';
+import { PLAYER_ROLES } from '@/constants/cricket';
 
 export default function AdminPlayers() {
   const { user, loading } = useAuth();
@@ -25,9 +24,22 @@ export default function AdminPlayers() {
 
   const handleAdd = async (e) => {
     e.preventDefault();
+    // Warn if team already has a captain and we're adding another
+    if (form.isCaptain) {
+      const teamPlayers = players.filter(p => p.team?._id === form.team || p.team === form.team);
+      const existingCaptain = teamPlayers.find(p => p.isCaptain);
+      if (existingCaptain) {
+        setMsg(`${existingCaptain.name} was captain — replaced as captain.`);
+      }
+    }
     const res = await api.post('/players', form);
-    if (res._id) { setMsg('Player added!'); setForm({ name: '', team: form.team, role: 'batsman', isCaptain: false }); loadPlayers(); }
-    else setMsg(res.message || 'Error');
+    if (res._id) {
+      setMsg(form.isCaptain ? `Player added as captain!` : 'Player added!');
+      setForm({ name: '', team: form.team, role: 'batsman', isCaptain: false });
+      loadPlayers();
+    } else {
+      setMsg(res.message || 'Error');
+    }
   };
 
   const confirmDelete = async () => {
@@ -97,7 +109,7 @@ export default function AdminPlayers() {
             </select>
             <select value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })}
               className="input-field" style={{ width: 'auto', cursor: 'pointer' }}>
-              {ROLES.map((r) => <option key={r} value={r}>{r.charAt(0).toUpperCase() + r.slice(1)}</option>)}
+            {PLAYER_ROLES.map((r) => <option key={r} value={r}>{r.charAt(0).toUpperCase() + r.slice(1)}</option>)}
             </select>
             <label style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-secondary)', fontSize: '13px', cursor: 'pointer' }}>
               <input type="checkbox" checked={form.isCaptain} onChange={(e) => setForm({ ...form, isCaptain: e.target.checked })} style={{ accentColor: 'var(--gold)' }} />

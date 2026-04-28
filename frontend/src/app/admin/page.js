@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/context/AuthContext';
 import AdminLayout from '@/components/AdminLayout';
-import { api } from '@/lib/api';
+import { api } from '@/services/api';
 
 export default function AdminDashboard() {
   const { user, loading } = useAuth();
@@ -105,16 +105,16 @@ export default function AdminDashboard() {
           ))}
         </div>
 
-        {/* Actions */}
+        {/* Actions — mobile only */}
         <motion.p 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
-          className="text-gray-500 text-xs font-bold tracking-widest mb-4 uppercase font-inter"
+          className="sm:hidden text-gray-500 text-xs font-bold tracking-widest mb-4 uppercase font-inter"
         >
           QUICK ACTIONS
         </motion.p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="sm:hidden grid grid-cols-1 gap-4">
           {actions.map((a, index) => (
             <Link key={a.href} href={a.href}>
               <motion.div 

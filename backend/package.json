@@ -1,16 +1,19 @@
 {
-  "name": "backend",
+  "name": "apl-cricket-api",
   "version": "1.0.0",
-  "description": "",
+  "description": "APL Cricket Tournament — REST API",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "start": "node index.js",
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "seed:teams": "node scripts/seedTeams.js",
+    "seed:admin": "node scripts/createAdmin.js",
+    "fix:players": "node scripts/fixPlayerNames.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "module",
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",

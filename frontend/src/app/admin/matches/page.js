@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import AdminLayout from '@/components/AdminLayout';
 import { useAuth } from '@/context/AuthContext';
-import { api } from '@/lib/api';
+import { api } from '@/services/api';
 
 export default function AdminMatches() {
   const { user, loading } = useAuth();

@@ -1,42 +1,42 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
-import dotenv from 'dotenv';
+import { config } from './src/config/index.js';
 import authRoutes from './routes/auth.js';
 import teamsRoutes from './routes/teams.js';
 import playersRoutes from './routes/players.js';
 import matchesRoutes from './routes/matches.js';
 import standingsRoutes from './routes/standings.js';
 
-dotenv.config();
-
 const app = express();
-const PORT = process.env.PORT || 5000;
 
-// CORS configuration for production - allow all origins
-app.use(cors({
-  origin: '*',
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-}));
+app.use(cors(config.cors));
 app.use(express.json());
 
+// Health check
+app.get('/api', (_req, res) => res.json({ message: 'APL Cricket API', status: 'ok', env: config.nodeEnv }));
+app.get('/', (_req, res) => res.send('APL Cricket API running'));
+
 // Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/teams', teamsRoutes);
-app.use('/api/players', playersRoutes);
-app.use('/api/matches', matchesRoutes);
+app.use('/api/auth',      authRoutes);
+app.use('/api/teams',     teamsRoutes);
+app.use('/api/players',   playersRoutes);
+app.use('/api/matches',   matchesRoutes);
 app.use('/api/standings', standingsRoutes);
 
-// API root endpoint
-app.get('/api', (req, res) => res.json({ message: 'Cricket Scoreboard API running', status: 'ok' }));
-
-app.get('/', (req, res) => res.send('Cricket Scoreboard API running'));
+// Global error handler
+app.use((err, _req, res, _next) => {
+  console.error(err.stack);
+  res.status(500).json({ message: 'Internal server error' });
+});
 
 mongoose
-  .connect(process.env.MONGO_URI)
+  .connect(config.mongoUri)
   .then(() => {
     console.log('MongoDB connected');
-    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+    app.listen(config.port, () => console.log(`Server running on port ${config.port} [${config.nodeEnv}]`));
   })
-  .catch((err) => console.error('MongoDB error:', err));
+  .catch((err) => {
+    console.error('MongoDB connection failed:', err.message);
+    process.exit(1);
+  });

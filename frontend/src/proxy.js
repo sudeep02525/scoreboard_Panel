@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-export function middleware(request) {
+export function proxy(request) {
   const { pathname } = request.nextUrl;
   const token = request.cookies.get('token')?.value;
   const role = request.cookies.get('role')?.value;
@@ -13,7 +13,7 @@ export function middleware(request) {
     return NextResponse.next();
   }
 
-  // Admin login page
+  // Admin login page — redirect already-logged-in admins
   if (pathname === '/admin/login') {
     if (token && role === 'admin') {
       return NextResponse.redirect(new URL('/admin', request.url));
@@ -29,7 +29,7 @@ export function middleware(request) {
     return NextResponse.next();
   }
 
-  // All other routes (dashboard, matches, standings) are fully public
+  // All other routes are fully public
   return NextResponse.next();
 }
 

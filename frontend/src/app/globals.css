@@ -1,37 +1,55 @@
 @import "tailwindcss";
 
-:root {
-  /* Sports Scoreboard Fonts */
+:root,
+[data-theme="dark"] {
   --font-inter: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-bebas: 'Bebas Neue', 'Impact', 'Arial Black', sans-serif;
-  --bg-primary: #060e1a;
+  --bg-primary:   #060e1a;
   --bg-secondary: #0a1628;
-  --bg-card: #0d1b2e;
-  --bg-elevated: #112240;
-  --border-subtle: rgba(201, 162, 39, 0.08);
+  --bg-card:      #0d1b2e;
+  --bg-elevated:  #112240;
+  --border-subtle:  rgba(201, 162, 39, 0.08);
   --border-default: rgba(201, 162, 39, 0.12);
-  --border-strong: rgba(201, 162, 39, 0.25);
-  --gold: #c9a227;
+  --border-strong:  rgba(201, 162, 39, 0.25);
+  --gold:       #c9a227;
   --gold-light: #e8c84a;
   --gold-bright: #F3C570;
-  --gold-dim: rgba(201, 162, 39, 0.6);
-  --text-primary: #e8e8e8;
+  --gold-dim:   rgba(201, 162, 39, 0.6);
+  --text-primary:   #e8e8e8;
   --text-secondary: #8b9db7;
-  --text-muted: #4a6a82;
-  --text-dim: #2a3f55;
-  --red: #ef4444;
+  --text-muted:     #4a6a82;
+  --text-dim:       #2a3f55;
+  --red:   #ef4444;
   --green: #22c55e;
   --sidebar-w: 260px;
+  --shadow-card: 0 4px 24px rgba(0,0,0,0.4);
 }
 
-.font-bebas {
-  font-family: var(--font-bebas);
-  letter-spacing: 0.05em;
+/* ─── Light theme ─── */
+[data-theme="light"] {
+  --bg-primary:   #f4f6fa;
+  --bg-secondary: #ffffff;
+  --bg-card:      #ffffff;
+  --bg-elevated:  #eef1f7;
+  --border-subtle:  rgba(180, 140, 20, 0.12);
+  --border-default: rgba(180, 140, 20, 0.2);
+  --border-strong:  rgba(180, 140, 20, 0.4);
+  --gold:       #b8860b;
+  --gold-light: #d4a017;
+  --gold-bright: #c9a227;
+  --gold-dim:   rgba(184, 134, 11, 0.5);
+  --text-primary:   #0f1923;
+  --text-secondary: #3a4f6a;
+  --text-muted:     #6b7f96;
+  --text-dim:       #9aafbf;
+  --red:   #dc2626;
+  --green: #16a34a;
+  --shadow-card: 0 2px 16px rgba(0,0,0,0.08);
 }
 
-.font-inter {
-  font-family: var(--font-inter);
-}
+/* ─── Font Classes ─── */
+.font-bebas { font-family: var(--font-bebas); letter-spacing: 0.05em; }
+.font-inter { font-family: var(--font-inter); }
 
 /* @theme inline {
   --color-background: var(--bg-primary);
@@ -52,10 +70,6 @@ body {
 
 html, body { height: 100%; margin: 0; padding: 0; overflow-x: hidden; }
 
-/* ─── Font Classes ─── */
-.font-bebas { font-family: var(--font-bebas); letter-spacing: 0.05em; }
-.font-inter { font-family: var(--font-inter); }
-
 /* ─── Scrollbar ─── */
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
@@ -71,8 +85,8 @@ html, body { height: 100%; margin: 0; padding: 0; overflow-x: hidden; }
   width: var(--sidebar-w);
   min-width: var(--sidebar-w);
   height: 100dvh;
-  background: linear-gradient(180deg, #0a0e1a 0%, #060a12 100%);
-  border-right: 1px solid rgba(201, 162, 39, 0.1);
+  background: var(--bg-secondary);
+  border-right: 1px solid var(--border-subtle);
   padding: 0;
 }
 

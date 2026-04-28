@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import MatchCard from '@/components/MatchCard';
 import StandingsTable from '@/components/StandingsTable';
-import { api } from '@/lib/api';
+import { api } from '@/services/api';
 
 export default function Dashboard() {
   return (
@@ -22,13 +22,16 @@ function DashboardContent() {
   const [standings, setStandings] = useState({ groupA: [], groupB: [] });
   const [activeTab, setActiveTab] = useState('live');
   const [loading, setLoading] = useState(true);
+  const [lastUpdated, setLastUpdated] = useState(null);
+  const [syncing, setSyncing] = useState(false);
 
   useEffect(() => {
     const tab = searchParams.get('tab');
     if (tab) setActiveTab(tab);
   }, [searchParams]);
 
-  const fetchData = async () => {
+  const fetchData = async (silent = false) => {
+    if (!silent) setSyncing(true);
     const [live, all, stand] = await Promise.all([
       api.get('/matches/live'), api.get('/matches'), api.get('/standings'),
     ]);
@@ -36,9 +39,16 @@ function DashboardContent() {
     setAllMatches(Array.isArray(all) ? all : []);
     setStandings(stand.groupA ? stand : { groupA: [], groupB: [] });
     setLoading(false);
+    setLastUpdated(new Date());
+    setSyncing(false);
   };
 
-  useEffect(() => { fetchData(); const i = setInterval(fetchData, 10000); return () => clearInterval(i); }, []);
+  useEffect(() => {
+    fetchData();
+    // Poll every 4 seconds for near-real-time updates
+    const i = setInterval(() => fetchData(true), 4000);
+    return () => clearInterval(i);
+  }, []);
 
   const completed = allMatches.filter((m) => m.status === 'completed');
   const upcoming = allMatches.filter((m) => m.status === 'scheduled');
@@ -70,15 +80,16 @@ function DashboardContent() {
   ];
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-[#0a0e1a] via-[#0d1117] to-[#080c14]">
-      <div className="max-w-7xl mx-auto px-4 md:px-6 py-6 space-y-5">
+    <div style={{ minHeight: '100vh', background: 'var(--bg-primary)' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '24px 20px', display: 'flex', flexDirection: 'column', gap: 20 }}>
 
         {/* Hero Header - PREMIUM */}
         <motion.div 
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="relative bg-linear-to-br from-[#1a1f2e] to-[#0f1419] rounded-2xl border border-yellow-500/20 p-6 md:p-8 overflow-hidden hover:border-yellow-500/40 transition-all duration-500 hover:shadow-2xl hover:shadow-yellow-500/10"
+          className="relative rounded-2xl p-6 md:p-8 overflow-hidden transition-all duration-500"
+          style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)' }}
         >
           {/* Animated Background Glow */}
           <motion.div 
@@ -105,11 +116,11 @@ function DashboardContent() {
                 <Image src="/logo.png" alt="APL Logo" width={72} height={72} className="object-contain" />
               </motion.div>
               {liveMatches.length > 0 && (
-                <motion.div 
+                <motion.div
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  transition={{ type: "spring", delay: 0.4 }}
-                  className="absolute -top-2 -right-2 min-w-6 h-6 px-1.5 rounded-full bg-linear-to-br from-red-500 to-red-600 flex items-center justify-center text-xs font-black text-white shadow-lg shadow-red-500/50 border-2 border-[#0f1419] font-bebas"
+                  transition={{ type: 'spring', delay: 0.4 }}
+                  style={{ position: 'absolute', top: -8, right: -8, minWidth: 22, height: 22, padding: '0 5px', borderRadius: 11, background: '#ef4444', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, fontWeight: 900, color: '#fff', border: '2px solid var(--bg-card)' }}
                 >
                   {liveMatches.length}
                 </motion.div>
@@ -121,28 +132,27 @@ function DashboardContent() {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.3 }}
-                className="text-3xl md:text-4xl font-black text-white leading-none tracking-tight font-inter"
+                className="text-3xl md:text-4xl font-black leading-none tracking-tight font-inter"
+                style={{ color: 'var(--text-primary)' }}
               >
-                APL <span className="text-yellow-500">SCOREBOARD</span>
+                APL <span style={{ color: 'var(--gold)' }}>SCOREBOARD</span>
               </motion.h1>
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.4 }}
-                className="flex items-center gap-2 mt-3 text-sm text-gray-400 justify-center md:justify-start font-inter"
+                style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 10, fontSize: 13, color: 'var(--text-muted)', justifyContent: 'center' }}
+                className="md:justify-start"
               >
                 {liveMatches.length > 0 ? (
                   <>
-                    <motion.span 
-                      animate={{ scale: [1, 1.3, 1] }}
-                      transition={{ duration: 1.5, repeat: Infinity }}
-                      className="w-2 h-2 rounded-full bg-red-500 shadow-lg shadow-red-500/50"
-                    />
-                    <span>{liveMatches.length} matches live right now</span>
+                    <motion.span animate={{ scale: [1, 1.3, 1] }} transition={{ duration: 1.5, repeat: Infinity }}
+                      style={{ width: 8, height: 8, borderRadius: '50%', background: '#ef4444', display: 'inline-block', boxShadow: '0 0 6px #ef4444' }} />
+                    <span>{liveMatches.length} match{liveMatches.length !== 1 ? 'es' : ''} live right now</span>
                   </>
                 ) : (
                   <>
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                    <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
                     <span>No live matches</span>
                   </>
                 )}
@@ -150,58 +160,70 @@ function DashboardContent() {
             </div>
 
             {liveMatches.length > 0 && (
-              <motion.div 
-                initial={{ scale: 0, rotate: -180 }}
-                animate={{ scale: 1, rotate: 0 }}
-                transition={{ type: "spring", stiffness: 200, delay: 0.5 }}
-                className="flex items-center gap-3 px-5 py-2.5 rounded-full bg-linear-to-r from-red-950/60 to-red-900/40 border-2 border-red-500/60 shrink-0 backdrop-blur-md shadow-lg shadow-red-500/30"
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: 'spring', stiffness: 200, delay: 0.5 }}
+                style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6, flexShrink: 0 }}
               >
-                <motion.span 
-                  animate={{ scale: [1, 1.4, 1] }}
-                  transition={{ duration: 1.5, repeat: Infinity }}
-                  className="w-2.5 h-2.5 rounded-full bg-red-500"
-                />
-                <span className="text-sm font-black text-red-500 uppercase tracking-widest font-bebas">LIVE</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 16px', borderRadius: 100, background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.4)' }}>
+                  <motion.span animate={{ scale: [1, 1.4, 1] }} transition={{ duration: 1.5, repeat: Infinity }}
+                    style={{ width: 8, height: 8, borderRadius: '50%', background: '#ef4444', display: 'inline-block', boxShadow: '0 0 8px #ef4444' }} />
+                  <span style={{ fontSize: 12, fontWeight: 900, color: '#ef4444', letterSpacing: '0.12em', fontFamily: 'var(--font-bebas)' }}>LIVE</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11, color: 'var(--text-muted)' }}>
+                  <motion.span animate={{ opacity: syncing ? [1, 0.3, 1] : 1 }} transition={{ duration: 0.8, repeat: syncing ? Infinity : 0 }}
+                    style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--green)', display: 'inline-block' }} />
+                  <span>{syncing ? 'Syncing...' : lastUpdated ? `Updated ${lastUpdated.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}` : ''}</span>
+                </div>
               </motion.div>
             )}
           </div>
         </motion.div>
 
+        {/* Tab bar */}
+        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+          {tabs.map(tab => {
+            const active = activeTab === tab.id;
+            return (
+              <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{
+                display: 'flex', alignItems: 'center', gap: 6,
+                padding: '9px 18px', borderRadius: 10, fontSize: 13, fontWeight: 700,
+                cursor: 'pointer', border: 'none', transition: 'all .2s',
+                background: active ? 'var(--gold)' : 'var(--bg-card)',
+                color: active ? 'var(--bg-primary)' : 'var(--text-secondary)',
+                boxShadow: active ? '0 4px 16px rgba(201,162,39,0.2)' : 'none',
+                outline: !active ? '1px solid var(--border-subtle)' : 'none',
+              }}>
+                {tab.icon}
+                {tab.label}
+                {tab.count > 0 && (
+                  <span style={{
+                    fontSize: 10, fontWeight: 800, minWidth: 18, height: 18,
+                    borderRadius: 9, display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                    background: active ? 'rgba(6,14,26,0.25)' : 'var(--bg-elevated)',
+                    color: active ? 'var(--bg-primary)' : 'var(--text-muted)',
+                    padding: '0 5px',
+                  }}>{tab.count}</span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+
         {/* Content */}
         {loading ? (
-          <div className="flex items-center justify-center py-20">
-            <div className="relative">
-              <div className="w-16 h-16 border-4 border-[#1c2333] border-t-[#c8a84b] rounded-full animate-spin"></div>
-            </div>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '80px 0' }}>
+            <div style={{ width: 36, height: 36, border: '3px solid var(--border-default)', borderTopColor: 'var(--gold)', borderRadius: '50%', animation: 'spin .8s linear infinite' }} />
+            <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
           </div>
         ) : (
           <>
-            {activeTab === 'live' && (
-              <Section 
-                matches={liveMatches}
-                emptyIcon={<svg className="w-16 h-16 text-slate-600" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>}
-                emptyText="No live matches right now"
-                emptySub="Matches will appear here when they start"
-              />
-            )}
-            {activeTab === 'upcoming' && (
-              <Section 
-                matches={upcoming}
-                emptyIcon={<svg className="w-16 h-16 text-slate-600" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>}
-                emptyText="No upcoming matches"
-                emptySub="Check back later for scheduled fixtures"
-              />
-            )}
-            {activeTab === 'results' && (
-              <Section 
-                matches={completed}
-                emptyIcon={<svg className="w-16 h-16 text-slate-600" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>}
-                emptyText="No results yet"
-                emptySub="Completed matches will appear here"
-              />
-            )}
+            {activeTab === 'live' && <Section matches={liveMatches} emptyText="No live matches right now" emptySub="Matches will appear here when they start" />}
+            {activeTab === 'upcoming' && <Section matches={upcoming} emptyText="No upcoming matches" emptySub="Check back later for scheduled fixtures" />}
+            {activeTab === 'results' && <Section matches={completed} emptyText="No results yet" emptySub="Completed matches will appear here" />}
             {activeTab === 'standings' && (
-              <div className="grid md:grid-cols-2 gap-6">
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px,1fr))', gap: 20 }}>
                 <StandingsTable teams={standings.groupA} groupName="A" />
                 <StandingsTable teams={standings.groupB} groupName="B" />
               </div>
@@ -213,47 +235,30 @@ function DashboardContent() {
   );
 }
 
-function Section({ matches, emptyIcon, emptyText, emptySub }) {
+function Section({ matches, emptyText, emptySub }) {
   if (!matches || matches.length === 0) {
     return (
-      <div className="bg-[#0d1117] border border-[#1c2333] rounded-2xl p-16 text-center" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-        <div className="mb-4 flex justify-center">{emptyIcon}</div>
-        <h3 className="text-xl font-bold text-white mb-2">{emptyText}</h3>
-        <p className="text-[#6a8090]">{emptySub}</p>
+      <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: 16, padding: '60px 24px', textAlign: 'center' }}>
+        <p style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 6 }}>{emptyText}</p>
+        <p style={{ fontSize: 13, color: 'var(--text-muted)' }}>{emptySub}</p>
       </div>
     );
   }
-  
   return (
-    <motion.div 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-      className="grid grid-cols-1 md:grid-cols-2 gap-4"
-    >
-      {matches.map((m, index) => (
-        <motion.div
-          key={m._id}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: index * 0.1, duration: 0.4 }}
-        >
-          <MatchCard match={m} />
-        </motion.div>
-      ))}
-    </motion.div>
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 16 }}>
+      {matches.map(m => <MatchCard key={m._id} match={m} />)}
+    </div>
   );
 }
 
 function LoadingScreen() {
   return (
-    <div className="min-h-screen bg-[#080c12] flex items-center justify-center">
-      <div className="text-center" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-        <div className="relative w-20 h-20 mx-auto mb-4">
-          <div className="absolute inset-0 border-4 border-[#1c2333] border-t-[#c8a84b] rounded-full animate-spin"></div>
-        </div>
-        <p className="text-[#6a8090] font-semibold">Loading matches...</p>
+    <div style={{ minHeight: '100vh', background: 'var(--bg-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ textAlign: 'center' }}>
+        <div style={{ width: 40, height: 40, border: '3px solid var(--border-default)', borderTopColor: 'var(--gold)', borderRadius: '50%', animation: 'spin .8s linear infinite', margin: '0 auto 16px' }} />
+        <p style={{ fontSize: 13, color: 'var(--text-muted)', fontWeight: 600 }}>Loading matches...</p>
       </div>
+      <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
     </div>
   );
 }

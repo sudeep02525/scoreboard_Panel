@@ -36,6 +36,12 @@ router.post('/', protect, adminOnly, async (req, res) => {
     const team = await Team.findById(req.body.team);
     if (!team) return res.status(404).json({ message: 'Team not found' });
     if (team.players.length >= 7) return res.status(400).json({ message: 'Team already has 7 players' });
+
+    // Enforce one captain per team
+    if (req.body.isCaptain) {
+      await Player.updateMany({ team: req.body.team, isCaptain: true }, { isCaptain: false });
+    }
+
     const player = await Player.create(req.body);
     team.players.push(player._id);
     await team.save();
@@ -48,6 +54,16 @@ router.post('/', protect, adminOnly, async (req, res) => {
 // Update player (admin)
 router.put('/:id', protect, adminOnly, async (req, res) => {
   try {
+    // Enforce one captain per team when updating
+    if (req.body.isCaptain) {
+      const player = await Player.findById(req.params.id);
+      if (player) {
+        await Player.updateMany(
+          { team: player.team, _id: { $ne: player._id }, isCaptain: true },
+          { isCaptain: false }
+        );
+      }
+    }
     const player = await Player.findByIdAndUpdate(req.params.id, req.body, { new: true });
     res.json(player);
   } catch (err) {
